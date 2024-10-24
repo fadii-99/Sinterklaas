@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGift, faPen, faTruck, faShieldAlt } from '@fortawesome/free-solid-svg-icons';
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { useEffect, useRef } from 'react';
+import cliniClownIcon from './../assets/cliniclown.png';
 
 // Array of card objects
 const cards = [
@@ -11,7 +12,7 @@ const cards = [
   { icon: faTruck, text: "Direct beschikbaar" },
   { icon: faWhatsapp, text: "Nieuw: ontvang/verstuur <br /> via WhatsApp" },
   { icon: faShieldAlt, text: "Veilig betalen" },
-  { icon: faGift, text: "Extra cadeautjes van de Sint" }, // Duplicate to ensure smooth loop
+  { icon: cliniClownIcon, text: "Wij steunen" , isImage: true}, // Duplicate to ensure smooth loop
 ];
 
 // Custom Continuous Sliding Component
@@ -50,9 +51,13 @@ function HeroSlider() {
         {cards.concat(cards).map((card, index) => ( // Duplicating cards for seamless loop
           <div
             key={index}
-            className="flex items-center justify-center gap-8 min-w-[33.33%]" // Each slide takes 1/3 width
+            className="flex items-center justify-center gap-8 min-w-full sm:min-w-[50%] md:min-w-[33.33%]" // Responsive widths for each slide
           >
-            <FontAwesomeIcon icon={card.icon} className="text-3xl text-gray-600" />
+             {card.isImage ? (
+              <img src={card.icon} className="h-[2rem] w-auto object-cover" alt="cliniClown-logo" />
+            ) : (
+              <FontAwesomeIcon icon={card.icon} className="text-3xl text-gray-600" />
+            )}
             <span
               className="text-gray-600 text-sm font-semibold"
               dangerouslySetInnerHTML={{ __html: card.text }}

@@ -23,7 +23,7 @@ function HeroSection(){
                 backgroundPosition: 'center',
             }}
         >
-            <div className="max-w-4xl w-full flex flex-col items-center gap-5 sm:px-0 px-8">
+            <div className="max-w-4xl w-full flex flex-col items-center gap-5 sm:px-4 px-8">
               <label 
               className='md:text-lg sm:text-sm text-xs font-black italic bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 
               bg-clip-text text-transparent'>
