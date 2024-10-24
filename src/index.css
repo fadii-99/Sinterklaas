@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Manrope:wght@400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-10px);
+    }
+    60% {
+      transform: translateY(-10px);
+    }
+  }
+  
+  .bounce-animation {
+    animation: bounce 4s infinite;
+  }
+  
+  .custom-swiper-pagination {
+    bottom: -2rem; 
+    left: 0;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .swiper {
+    margin-bottom: -2rem;
+  }
+
+
+  .custom-swiper-pagination .swiper-pagination-bullet {
+  background-color: white; 
+}
+
+
+.custom-swiper-pagination .swiper-pagination-bullet-active {
+  background-color: white; 
+}
+
+
+
+.vignette-gradient {
+  background: radial-gradient(ellipse at center, transparent 50%, rgb(27, 1, 1) 100%);
+}
+
+
+
+
+.custom-swiper-button-prev,
+.custom-swiper-button-next {
+  color: white !important; 
+  position: absolute;
+ 
+}
+
+/* Optionally, you can style the arrows with additional properties */
+.custom-swiper-button-prev {
+  left: 20px !important;
+  
+}
+
+.custom-swiper-button-next {
+  right: 20px !important;
+}
+
+
+/* ....... */
+
+.swiper-pagination {
+  position: static !important; /* Remove absolute positioning */
+  margin-top: 60px; /* Add some space above the pagination */
+  text-align: center; /* Center align the pagination dots */
+}
+
+/* Change the color of the pagination bullets */
+.swiper-pagination-bullet {
+  background: black !important; /* Change default color to black */
+}
+
+.swiper-pagination-bullet-active {
+  background: black !important; /* Change active dot color to black */
+}
+
+
+
+/* Add this to your global CSS file */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 8px; /* Scrollbar width */
+  border-radius: 10rem;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: #b2b7be; /* Scrollbar thumb color */
+  border-radius: 0 10rem 10rem 10rem;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background-color: #e5e7eb; /* Scrollbar track color */
+  border-radius: 10rem;
+}
+
+
+
+
+/* Default pagination bullet style (gray) */
+.swiper-pagination-bullet {
+  background-color: #A0A0A0; /* Gray color */
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin: 0 4px;
+  opacity: 1;
+}
+
+/* Active pagination bullet style (red-950) */
+.swiper-pagination-bullet-active {
+  background-color: #7f1d1d; /* Red-950 color */
+  width: 12px; /* Slightly larger for emphasis */
+  height: 12px;
+}
+
+
+
+/* ........... */
+
+
+.card {
+  width: 90%;
+  box-sizing: border-box;
+  padding: 16px;
+}
+
+
+.fade-in-left {
+  opacity: 0;
+}
+
+.fade-in-left.animate {
+  animation: fadeInLeft 1s forwards;
+}
+
+.fade-in-right {
+  opacity: 0;
+}
+
+.fade-in-right.animate {
+  animation: fadeInRight 1s forwards;
+}
