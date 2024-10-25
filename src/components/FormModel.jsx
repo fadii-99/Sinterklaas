@@ -24,10 +24,13 @@ function FormModel({ data, onClose }) {
   const [filePath, setFilePath] = useState('static/generated_audios/b6cbfc78-90eb-4aa6-9147-fb2398723639.mp3');
   const [validationError, setValidationError] = useState(false);
   const [purchaseLoader, setPurchaseLoader] = useState(false); // State to control purchase button loader
-
-  const [childName, setChildName] = useState('');
+const [childName, setChildName] = useState('');
 const [childAge, setChildAge] = useState('');
 const [childHobby, setChildHobby] = useState('');
+const [schoolName, setSchoolName] = useState('');
+const [teacherName, setTeacherName] = useState('');
+const [subjectActivity, setSubjectActivity] = useState('');
+
 
 
 // ........
@@ -39,6 +42,9 @@ const [errors, setErrors] = useState({
   images: false,
   phoneNumbers: false,
   dateTime: false,
+  // schoolName: false,
+  // teacherName: false,
+  // subjectActivity: false,
 });
 
 
@@ -194,24 +200,49 @@ const handleAddNumberClick = () => {
   }
 };
 
+
+// School Name Handler
+const handleSchoolNameChange = (e) => {
+  setSchoolName(e.target.value);
+  setErrors((prev) => ({ ...prev, schoolName: false }));
+};
+
+// Teacher Name Handler
+const handleTeacherNameChange = (e) => {
+  setTeacherName(e.target.value);
+  setErrors((prev) => ({ ...prev, teacherName: false }));
+};
+
+// Subject/Activity Handler
+const handleSubjectActivityChange = (e) => {
+  setSubjectActivity(e.target.value);
+  setErrors((prev) => ({ ...prev, subjectActivity: false }));
+};
+
+
+
 // ..................................
 
-  const validateForm = () => {
-    const newErrors = {
-      email: !email.trim(),
-      childName: !childName.trim(),
-      childAge: !childAge.trim(),
-      childHobby: !childHobby.trim(),
-      images: images.length === 0,
-      phoneNumbers: phoneNumbers.length === 0,
-      dateTime: !dateTime,
-    };
-  
-    setErrors(newErrors);
-  
-    // Check if any errors exist
-    return !Object.values(newErrors).includes(true);
+const validateForm = () => {
+  const newErrors = {
+    email: !email.trim(),
+    childName: !childName.trim(),
+    childAge: !childAge.trim(),
+    childHobby: !childHobby.trim(),
+    images: images.length === 0,
+    phoneNumbers: phoneNumbers.length === 0,
+    dateTime: !dateTime,
+    // schoolName: !schoolName.trim(),
+    // teacherName: !teacherName.trim(),
+    // subjectActivity: !subjectActivity.trim(),
   };
+
+  setErrors(newErrors);
+
+  // Check if any errors exist
+  return !Object.values(newErrors).includes(true);
+};
+
   
 
   
@@ -228,6 +259,9 @@ const purchaseNow = async () => {
   formData.append('name', childName);
   formData.append('age', childAge);
   formData.append('hobby', childHobby);
+  // formData.append('school_name', schoolName);
+  // formData.append('teacher_name', teacherName);
+  // formData.append('subject_activity', subjectActivity);
 
 
 
@@ -292,7 +326,7 @@ const purchaseNow = async () => {
                 setPrompt(e.target.value);         // Update the prompt value
                 setPromptError(false);             // Reset the error when user starts typing
               }}
-              className={`p-3 border ${promptError ? 'border-red-500' : 'border-gray-300'} rounded-md w-full focus:outline-none sm:text-sm text-xs`}
+              className={`p-3 border ${promptError ? 'border-red-500' : 'border-gray-300'} rounded-md w-full focus:outline-none  text-xs`}
             >
             </textarea>
 
@@ -300,11 +334,11 @@ const purchaseNow = async () => {
               <button 
                 onClick={generateVoice} // Call the generateVoice function
                 className='w-[8rem] h-[2.8rem] bg-gradient-to-r from-yellow-400 to-amber-500 flex items-center justify-center rounded-md
-                text-red-950 font-black sm:text-sm text-xs transform transition-transform duration-300 hover:scale-[103%]'
+                text-red-950 font-black  text-xs transform transition-transform duration-300 hover:scale-[103%]'
                 disabled={loading} // Disable button while loading
               >
                 {loading ? (
-                  <FontAwesomeIcon icon={faSpinner} spin className="text-red-950 sm:text-sm text-xs" /> // Show loader
+                  <FontAwesomeIcon icon={faSpinner} spin className="text-red-950  text-xs" /> // Show loader
                 ) : (
                   'Generate'
                 )}
@@ -326,48 +360,106 @@ const purchaseNow = async () => {
           <div className='flex flex-col w-full'>
            
               {/* Child Name and Age and Hobby */}
-              <div className='flex md:flex-row flex-col gap-6 md:py-10 py-6 w-full'>
-                  <div className='flex flex-col items-start gap-2 w-full'>
-                    <label className="text-gray-700 font-semibold sm:text-sm text-xs">Enter Child Name</label>
-                    <input
-                        type="text"
-                        placeholder="Child Name"
-                        value={childName}
-                        onChange={handleChildNameChange}
-                        className={`p-3 border rounded-md w-full focus:outline-none sm:text-sm text-xs ${
-                          errors.childName ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                      />
-                  </div>
+              <div className='flex flex-col gap-6 md:pb-10 pb-6'>
+                    <h1 className="sm:text-2xl text-xl font-light font-christmas text-red-950">Child Information</h1>
+                    <div className='flex md:flex-row flex-col gap-6  w-full'>
+                        <div className='flex flex-col items-start gap-2 w-full'>
+                          <label className="text-gray-700 font-semibold  text-xs">Enter Child Name</label>
+                          <input
+                              type="text"
+                              placeholder="Child Name"
+                              value={childName}
+                              maxLength={20}
+                              onChange={handleChildNameChange}
+                              className={`p-3 border rounded-md w-full focus:outline-none  text-xs ${
+                                errors.childName ? 'border-red-500' : 'border-gray-300'
+                              }`}
+                            />
+                        </div>
 
-                  <div className='flex flex-col items-start gap-2 w-full'>
-                    <label className="text-gray-700 font-semibold sm:text-sm text-xs">Enter Child Age</label>
-                    <input
-                        type="number"
-                        min="0"
-                        placeholder="Child Age"
-                        value={childAge}
-                        onChange={handleChildAgeChange}
-                        className={`p-3 border rounded-md w-full focus:outline-none sm:text-sm text-xs ${
-                          errors.childAge ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                      />
+                        <div className='flex flex-col items-start gap-2 w-full'>
+                          <label className="text-gray-700 font-semibold  text-xs">Enter Child Age</label>
+                          <input
+                              type="number"
+                              min="0"
+                              placeholder="Child Age"
+                              value={childAge}
+                              onChange={handleChildAgeChange}
+                              className={`p-3 border rounded-md w-full focus:outline-none  text-xs ${
+                                errors.childAge ? 'border-red-500' : 'border-gray-300'
+                              }`}
+                            />
 
-                  </div>
+                        </div>
 
-                  <div className='flex flex-col items-start gap-2 w-full'>
-                    <label className="text-gray-700 font-semibold sm:text-sm text-xs">Enter Child Hobby</label>
-                    <input
-                        type="text"
-                        placeholder="Child Hobby"
-                        value={childHobby}
-                        onChange={handleChildHobbyChange}
-                        className={`p-3 border rounded-md w-full focus:outline-none sm:text-sm text-xs ${
-                          errors.childHobby ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                      />
-                  </div>
+                        <div className='flex flex-col items-start gap-2 w-full'>
+                          <label className="text-gray-700 font-semibold  text-xs">Enter Child Hobby</label>
+                          <input
+                              type="text"
+                              placeholder="Child Hobby"
+                              value={childHobby}
+                              maxLength={25}
+                              onChange={handleChildHobbyChange}
+                              className={`p-3 border rounded-md w-full focus:outline-none  text-xs ${
+                                errors.childHobby ? 'border-red-500' : 'border-gray-300'
+                              }`}
+                            />
+                        </div>
+                      </div>
                 </div>
+
+                {/* ........... */}
+                {/* <div className='flex flex-col gap-6 md:py-10 pb-6 md:border-t'>
+                      <h1 className="sm:text-2xl text-xl font-light font-christmas text-red-950">School Information</h1>
+                      <div className='flex flex-col items-start gap-6 '>
+                          <div className='flex md:flex-row flex-col items-center gap-6 w-full '>
+                          <div className='flex flex-col items-start gap-2 w-full'>
+                              <label className="text-gray-700 font-semibold  text-xs">Enter School Name</label>
+                              <input
+                                type="text"
+                                placeholder="School Name"
+                                value={schoolName}
+                                maxLength={25}
+                                onChange={handleSchoolNameChange}
+                                className={`p-3 border rounded-md w-full focus:outline-none text-xs ${
+                                  errors.schoolName ? 'border-red-500' : 'border-gray-300'
+                                }`}
+                              />
+                          </div>
+                          <div className="flex md:flex-row flex-col gap-6 md:py-0 md:pb-0 pb-6 w-full">
+                            <div className="flex flex-col items-start gap-2 w-full">
+                              <label className="text-gray-700 font-semibold  text-xs">Enter Teacher Name</label>
+                              <input
+                                type="text"
+                                placeholder="Teacher Name"
+                                value={teacherName}
+                                maxLength={25}
+                                onChange={handleTeacherNameChange}
+                                className={`p-3 border rounded-md w-full focus:outline-none text-xs ${
+                                  errors.teacherName ? 'border-red-500' : 'border-gray-300'
+                                }`}
+                              />
+                            </div>
+                          </div>
+                      </div>
+                      <div className='flex flex-col items-start gap-2 w-full'>
+                              <label className="text-gray-700 font-semibold  text-xs">Enter Subject/Activity Child Enjoys</label>
+                              <input
+                                  type="text"
+                                  placeholder="Subject or Activity"
+                                  value={subjectActivity}
+                                  maxLength={40}
+                                  onChange={handleSubjectActivityChange}
+                                  className={`p-3 border rounded-md w-full focus:outline-none text-xs ${
+                                    errors.subjectActivity ? 'border-red-500' : 'border-gray-300'
+                                  }`}
+                                />
+                          </div>
+                      </div>
+                </div> */}
+                
+                
+             
 
 
 
@@ -375,13 +467,13 @@ const purchaseNow = async () => {
               <div className='flex md:flex-row flex-col items-center gap-6 w-full md:border-t md:py-10 pb-6'>
               {/* Email and date */}
                  <div className='flex flex-col items-start gap-2 w-full'>
-                    <label className="text-gray-700 font-semibold sm:text-sm text-xs">Enter Your Email</label>
+                    <label className="text-gray-700 font-semibold  text-xs">Enter Your Email</label>
                     <input
                         type="email"
                         placeholder="Enter your email"
                         value={email}
                         onChange={handleEmailChange}
-                        className={`p-3 border rounded-md w-full focus:outline-none sm:text-sm text-xs ${
+                        className={`p-3 border rounded-md w-full focus:outline-none  text-xs ${
                           errors.email ? 'border-red-500' : 'border-gray-300'
                         }`}
                       />
@@ -389,12 +481,12 @@ const purchaseNow = async () => {
                  <div className="flex md:flex-row flex-col gap-6 md:py-0 md:pb-0 pb-6 w-full">
                   {/* Date Input */}
                   <div className="flex flex-col items-start gap-2 w-full">
-                    <label className="text-gray-700 font-semibold sm:text-sm text-xs">Enter Date</label>
+                    <label className="text-gray-700 font-semibold  text-xs">Enter Date</label>
                     <input
                         type="date"
                         value={date}
                         onChange={handleDateChange}
-                        className={`p-3 border rounded-md w-full focus:outline-none sm:text-sm text-xs ${
+                        className={`p-3 border rounded-md w-full focus:outline-none  text-xs ${
                           errors.dateTime ? 'border-red-500' : 'border-gray-300'
                         }`}
                       />
@@ -402,11 +494,11 @@ const purchaseNow = async () => {
 
                   {/* Time Slot Dropdown */}
                   <div className="flex flex-col items-start gap-2 w-full">
-                    <label className="text-gray-700 font-semibold sm:text-sm text-xs">Select Time</label>
+                    <label className="text-gray-700 font-semibold  text-xs">Select Time</label>
                     <select
                         value={time}
                         onChange={handleTimeChange}
-                        className={`p-3 border rounded-md w-full focus:outline-none sm:text-sm text-xs ${
+                        className={`p-3 border rounded-md w-full focus:outline-none  text-xs ${
                           errors.dateTime ? 'border-red-500' : 'border-gray-300'
                         }`}
                       >
@@ -422,7 +514,7 @@ const purchaseNow = async () => {
             
             {/* Image / Media Upload */}
             <div className="flex flex-col md:gap-2 gap-1 md:border-t md:border-b md:py-10">
-              <label className="text-gray-700 font-semibold sm:text-sm text-xs">Upload Images / Media Files</label>
+              <label className="text-gray-700 font-semibold  text-xs">Upload Images / Media Files</label>
               <div className="flex items-center gap-2">
               <input
   type="file"
@@ -437,7 +529,7 @@ const purchaseNow = async () => {
               <label
   htmlFor="media-upload"
   className={`px-4 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 flex items-center justify-center rounded-md
-    text-red-950 font-black sm:text-sm text-xs cursor-pointer border-2 ${
+    text-red-950 font-black  text-xs cursor-pointer border-2 ${
       errors.images ? 'border-red-500' : 'border-yellow-400'
     } ${images.length >= 3 ? 'opacity-50 cursor-not-allowed' : ''}`}
 >
@@ -464,14 +556,14 @@ const purchaseNow = async () => {
 
             {/* Add Number Button */}
             <div className="flex flex-col md:gap-4 gap-2 md:py-10 py-6">
-              <label className="text-gray-700 font-semibold sm:text-sm text-xs">Add Phone Number</label>
+              <label className="text-gray-700 font-semibold  text-xs">Add Phone Number</label>
               <div className="flex flex-col items-start gap-6 w-full">
                  <div className='flex flex-row items-center gap-2 w-full'>
                  <button
   onClick={handleAddNumberClick}
   disabled={phoneNumbers.length >= phoneLimit}
   className={`px-4 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 flex items-center justify-center rounded-md text-nowrap
-    text-red-950 font-black sm:text-sm text-xs cursor-pointer border-2 ${
+    text-red-950 font-black  text-xs cursor-pointer border-2 ${
       errors.phoneNumbers ? 'border-red-500' : 'border-yellow-400'
     } ${phoneNumbers.length >= phoneLimit ? 'opacity-50 cursor-not-allowed' : ''}`}
 >
@@ -486,14 +578,14 @@ const purchaseNow = async () => {
       placeholder="Enter phone number"
       value={phoneNumber}
       onChange={handlePhoneNumberChange}
-      className={`p-3 border rounded-md w-full focus:outline-none sm:text-sm text-xs ${
+      className={`p-3 border rounded-md w-full focus:outline-none  text-xs ${
         errors.phoneNumbers ? 'border-red-500' : 'border-gray-300'
       }`}
     />
     <button
       onClick={handlePhoneNumberSubmit}
       className="px-4 py-3 bg-gradient-to-r from-gray-900 to-black flex items-center justify-center rounded-md
-      text-white font-semibold sm:text-sm text-xs cursor-pointer text-nowrap"
+      text-white font-semibold  text-xs cursor-pointer text-nowrap"
     >
       Enter Now
     </button>
@@ -505,7 +597,7 @@ const purchaseNow = async () => {
                   <div className="flex flex-row gap-2 items-start">
                     {phoneNumbers.map((number, index) => (
                       <div key={index} className="flex flex-col gap-3 items-center bg-gray-100 rounded-md p-2">
-                        <FontAwesomeIcon icon={faPhone} className="text-gray-600 sm:text-sm text-xs" />
+                        <FontAwesomeIcon icon={faPhone} className="text-gray-600  text-xs" />
                         <span className="text-gray-700 text-xs">{number}</span>
                       </div>
                     ))}
@@ -514,17 +606,17 @@ const purchaseNow = async () => {
               </div>
             </div>
             {validationError && (
-                <p className="text-red-500 sm:text-sm text-xs text-center mb-2">Please fill all fields before proceeding.</p>
+                <p className="text-red-500  text-xs text-center mb-2">Please fill all fields before proceeding.</p>
               )}
           <button 
               onClick={purchaseNow}
               disabled={purchaseLoader} // Disable button while loading
               className={`w-full h-[2.8rem] bg-gradient-to-r from-gray-900 to-black flex items-center justify-center rounded-md
-                text-white font-bold sm:text-sm text-xs transform transition-transform duration-300 hover:scale-[103%] 
+                text-white font-bold  text-xs transform transition-transform duration-300 hover:scale-[103%] 
                 ${purchaseLoader ? 'opacity-50 cursor-not-allowed' : ''}`} // Style when loading
             >
               {purchaseLoader ? (
-                <FontAwesomeIcon icon={faSpinner} spin className="text-white sm:text-sm text-xs" /> // Show loader
+                <FontAwesomeIcon icon={faSpinner} spin className="text-white  text-xs" /> // Show loader
               ) : (
                 'Purchase now'
               )}

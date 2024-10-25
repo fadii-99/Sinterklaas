@@ -71,15 +71,23 @@ function VideoModal({ video, onClose }) {
 <div className="relative w-full h-full">
   {isPlaying ? (
     // Render the video player when isPlaying is true
-    <video
-      width="100%"
-      height='100%'
-      controls={true}
-      className=""
-    >
-       <source src={video.videoUrl} type="video/mp4" />
-       Your browser does not support the video tag.
-    </video>
+    <div className='relative '>
+        <video
+          width="100%"
+          height='100%'
+          controls={true}
+          className=""
+        >
+          <source src={video.videoUrl} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <div className='absolute top-0 right-0 sm:p-4 p-2'>
+            <div className="w-[3rem] h-[3rem] bg-white bg-opacity-0 hover:bg-opacity-10 transition duration-300 ease-in-out 
+            flex items-center justify-center rounded-full z-50 ">
+            <FontAwesomeIcon onClick={onClose} icon={faTimes} className="text-white text-xl font-bold" />
+          </div>
+        </div>
+    </div>
   ) : (
     <>
       {/* Render the thumbnail when not playing */}

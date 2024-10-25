@@ -16,7 +16,7 @@ function VideoCarousel() {
 
   
   const videoData = [
-    { title: 'Introduction', videoUrl: introductionVideo },
+    { title: 'Greet Video', videoUrl: introductionVideo },
     // { title: 'Christmas Kitchen', videoUrl: 'https://www.youtube.com/watch?v=KB3fR4RBCtg' },
     // { title: 'Letter to Santa', videoUrl: 'https://www.youtube.com/watch?v=sCDHHt-o6oA' },
     // { title: 'Sinterklaas House', videoUrl: 'https://www.youtube.com/watch?v=H5id5b2svcM' },
