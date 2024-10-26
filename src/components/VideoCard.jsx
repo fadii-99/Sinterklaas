@@ -56,7 +56,7 @@ function VideoCard({ title , videoUrl , onClick }) {
                   <FontAwesomeIcon 
                   icon={faUser} className='text-white sm:text-md text-xs shadow-md' />
                   <label style={{ textShadow: '2px 2px 2px rgba(0, 0, 0, 0.7)' }}
-                  className="text-white sm:text-xs text-[10px] font-semibold upper">20 Personalization option</label>
+                  className="text-white sm:text-xs text-[10px] font-semibold upper">20 Personalisatiemogelijkheid</label>
                 </div>
           </div>
           </div>

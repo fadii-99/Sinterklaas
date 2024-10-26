@@ -8,16 +8,21 @@ import HeroSlider from '../components/HeroSlider';
 import useScrollAnimation from '../components/useScrollAnimation';
 import letter from './../assets/letter.png';
 
+
+
 function MainPage() {
   const videoSectionRef = useRef(null);
   const stats = [
-    { icon:  FaPlayCircle, value: "1500+", label: "VIDEO'S" },
+    { icon: FaPlayCircle, value: "1500+", label: "VIDEO'S" },
     { icon: FaChild, value: "2000+", label: "BLUE KINDEREN" },
     { icon: FaCalendarAlt, value: "174", label: "JAAR TRADITIE" },
     { icon: FaGift, value: "1", label: "PAKJESAVOND PER JAAR" }
   ];
 
+
+
   const [activeIndex, setActiveIndex] = useState(0);
+
 
 
   useScrollAnimation('.fade-in-left', 'animate');
@@ -35,14 +40,26 @@ function MainPage() {
     return () => clearInterval(interval);
   }, [stats.length]);
 
-  // const handleScrollToVideos = () => {
-  //   videoSectionRef.current.scrollIntoView({ behavior: 'smooth' });
-  // };
+
+
+  const handleScrollToVideos = () => {
+    videoSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+  };
   
 
   return (
     <div className="flex flex-col">
-      <HeroSection/>
+      <HeroSection 
+        subHeading={` ___Gepersonaliseerde Video's voor Familie en Vrienden!`}
+        heading={`Ontdek de Magie van Sinterklaas!`}
+        paragraph={` Creéer echte SintMagie met gepersonaliseerde video's van Sinterklaas. Laat
+                de Goedheiligman jouw gezin persoonlijk toespreken en geef jouw kind een
+                onvergetelijke ervaring!`}
+        showButton
+        avatar
+        height = "100vh"
+        onClick={handleScrollToVideos}
+      />
       <HeroSlider />
       {/* About Section */}
       <div className='w-full bg-gray-50 py-24'>
@@ -88,7 +105,7 @@ function MainPage() {
 
        {/* Letter section */}
        <div className='w-full bg-[#F5F5DC]'>
-          <div ref={videoSectionRef}
+          <div
           className="w-[80%] mx-auto py-24">
             <div className="flex flex-col items-center gap-8 sm:pb-20 pb-14 ">
               <h1 className="text-red-700 w-full text-center font-christmas md:text-7xl sm:text-5xl text-4xl">
@@ -127,7 +144,7 @@ function MainPage() {
       <div style={{ backgroundColor: '#fffafa' }} className='py-16'>
           <div className='w-[80%] mx-auto flex flex-col gap-8'>
               <h1 className="text-red-700 w-full text-center font-christmas md:text-7xl text-4xl">
-                Reviews
+              Beoordelingen
               </h1>
               <p className="sm:text-sm text-xs font-medium text-gray-600 text-center leading-6">
               Lees de ervaringen van tevreden klanten die al hebben genoten van onze gepersonaliseerde video's en brieven van 

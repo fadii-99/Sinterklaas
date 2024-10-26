@@ -1,15 +1,16 @@
 import { Outlet, useLocation } from "react-router-dom";
 import Navbar from './../components/Navbar';
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { BasicContext } from '../context/BasicContext';
 import FormModel from "../components/FormModel";
 import Footer from "../components/Footer";
+import ComingSoonModel from "../components/ComingSoonModel";
 
 function ParentElement() {
   const options = useContext(BasicContext);
   const location = useLocation();
 
-  // Scroll to top with smooth behavior whenever the URL changes
+
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -24,7 +25,20 @@ function ParentElement() {
         <Outlet />
       </div>
       <Footer />
-      {options.showFormModel && <FormModel data={options.purchaseData} onClose={() => options.setShowFormModel(false)} />}
+      
+      {/* Conditionally render FormModel */}
+      {options.showFormModel && (
+        <FormModel 
+          data={options.purchaseData} 
+          onClose={() => options.setShowFormModel(false)} 
+        />
+      )}
+
+      {/* ComingSoonModel Component */}
+      <ComingSoonModel 
+         isOpen={options.comingSoonModel} 
+         onClose={() => options.setComingSoonModel(false)} 
+      />
     </>
   );
 }

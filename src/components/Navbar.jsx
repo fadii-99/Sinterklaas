@@ -1,27 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import logo from './../assets/sinterklaasLogo.png';
 import { FaShoppingCart, FaBars } from 'react-icons/fa';
+import { BasicContext } from '../context/BasicContext';
 
 function Navbar() {
+  const { setComingSoonModel } = useContext(BasicContext);
+  const location = useLocation(); // Detect the current route
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  // Function to detect scroll position
+  // Close menu after clicking a menu item
+  const handleMenuClick = () => {
+    setIsOpen(false);
+  };
+
+  // Set `isScrolled` based on route or scroll position
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > window.innerHeight) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 100); // Trigger scroll effect after 100px
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
+    const isWhitePage = ['/TermOfServices', '/PrivacyPolicy'].includes(location.pathname);
+    if (isWhitePage) {
+      setIsScrolled(true);
+    } else {
+      window.addEventListener('scroll', handleScroll);
+    }
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [location]);
 
   return (
     <div
@@ -30,7 +38,7 @@ function Navbar() {
       }`}
     >
       {/* Logo */}
-      <Link to='/'>
+      <Link to='/' onClick={handleMenuClick}>
         <img src={logo} alt="Sinterklaas Logo" className="sm:h-12 h-8 w-auto" />
       </Link>
 
@@ -39,46 +47,48 @@ function Navbar() {
         <FaBars className={`${isScrolled ? 'text-gray-800' : 'text-white'} text-2xl`} />
       </button>
 
-      {/* Links and Actions, displayed conditionally */}
-      <div className={`${isOpen ? 'flex' : 'hidden'} absolute top-full right-0 bg-red-950 bg-opacity-90 shadow-md flex-col items-start gap-4 p-4 w-full md:hidden text-white`}>
-        <Link to="" className="text-white sm:text-sm text-xs font-bold hover:scale-105 transform transition-transform duration-300 my-1">
+      {/* Mobile Menu */}
+      <div
+        className={`${
+          isOpen ? 'flex' : 'hidden'
+        } absolute top-full right-0 bg-gray-950 bg-opacity-60 shadow-md flex-col items-start gap-4 p-4 w-full md:hidden text-white`}
+      >
+        <Link to='/' className="text-white sm:text-sm text-xs font-bold hover:scale-105 transition-transform duration-300 my-1" onClick={handleMenuClick}>
+          Startpagina
+        </Link>
+        <button onClick={() => { setComingSoonModel(true); handleMenuClick(); }} className="text-white sm:text-sm text-xs font-bold hover:scale-105 transition-transform duration-300 my-1">
           Video van Sinterklaas
-        </Link>
-        <Link to="" className="text-white sm:text-sm text-xs font-bold hover:scale-105 transform transition-transform duration-300 my-1">
+        </button>
+        <button onClick={() => { setComingSoonModel(true); handleMenuClick(); }} className="text-white sm:text-sm text-xs font-bold hover:scale-105 transition-transform duration-300 my-1">
           Brief van Sinterklaas
-        </Link>
-        <Link to="/" className="text-white sm:text-sm text-xs font-bold hover:scale-105 transform transition-transform duration-300 my-1">
+        </button>
+        <Link to='/Pricing' className="text-white sm:text-sm text-xs font-bold hover:scale-105 transition-transform duration-300 my-1" onClick={handleMenuClick}>
           Prijzen
         </Link>
-        <button
-          className="py-2 px-4 bg-gradient-to-r from-yellow-400 to-amber-500 flex items-center justify-center space-x-2 rounded-md
-              text-white font-black text-sm transform transition-transform duration-300 hover:scale-[103%] my-1"
-        >
+        <button onClick={() => { setComingSoonModel(true); handleMenuClick(); }} className="py-2 px-4 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-md text-white font-black text-sm hover:scale-[103%] transition-transform my-1">
           JOUW VIDEO
         </button>
-        <FaShoppingCart className="text-white text-xl hover:scale-105 transform transition-transform duration-300 self-start" />
+        <FaShoppingCart onClick={() => { setComingSoonModel(true); handleMenuClick(); }} className="text-white text-xl hover:scale-105 transition-transform" />
       </div>
 
-      {/* Larger screen menu, always visible */}
+      {/* Desktop Menu */}
       <div className="hidden md:flex gap-12 items-center">
-        <Link to="" className={`${isScrolled ? 'text-red-700' : 'text-white'} sm:text-sm text-xs font-semibold hover:scale-105 transform transition-transform duration-300`}>
+        <Link to='/' className={`${isScrolled ? 'text-red-700' : 'text-white'} sm:text-sm text-xs font-semibold hover:scale-105 transition-transform`} onClick={handleMenuClick}>
+          Startpagina
+        </Link>
+        <button onClick={() => setComingSoonModel(true)} className={`${isScrolled ? 'text-red-700' : 'text-white'} sm:text-sm text-xs font-semibold hover:scale-105 transition-transform`}>
           Video van Sinterklaas
-        </Link>
-        <Link to="" className={`${isScrolled ? 'text-red-700' : 'text-white'} sm:text-sm text-xs font-semibold hover:scale-105 transform transition-transform duration-300`}>
+        </button>
+        <button onClick={() => setComingSoonModel(true)} className={`${isScrolled ? 'text-red-700' : 'text-white'} sm:text-sm text-xs font-semibold hover:scale-105 transition-transform`}>
           Brief van Sinterklaas
-        </Link>
-        <Link to="/" className={`${isScrolled ? 'text-red-700' : 'text-white'} sm:text-sm text-xs font-semibold hover:scale-105 transform transition-transform duration-300`}>
+        </button>
+        <Link to='/Pricing' className={`${isScrolled ? 'text-red-700' : 'text-white'} sm:text-sm text-xs font-semibold hover:scale-105 transition-transform`} onClick={handleMenuClick}>
           Prijzen
         </Link>
-        <Link>
-          <button
-            className="py-2 px-4 bg-gradient-to-r from-yellow-400 to-amber-500 flex items-center justify-center space-x-2 rounded-md
-                text-red-950 font-black text-sm transform transition-transform duration-300 hover:scale-[103%] "
-          >
-            JOUW VIDEO
-          </button>
-        </Link>
-        <FaShoppingCart className={`${isScrolled ? 'text-red-700' : 'text-white'} text-xl hover:scale-105 transform transition-transform duration-300`} />
+        <button onClick={() => setComingSoonModel(true)} className="py-2 px-4 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-md text-red-950 font-black text-sm hover:scale-[103%] transition-transform">
+          JOUW VIDEO
+        </button>
+        <FaShoppingCart onClick={() => setComingSoonModel(true)} className={`${isScrolled ? 'text-red-700' : 'text-white'} text-xl hover:scale-105 transition-transform`} />
       </div>
     </div>
   );

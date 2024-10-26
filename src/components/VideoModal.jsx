@@ -5,13 +5,22 @@ import ReactPlayer from 'react-player';
 import { BasicContext } from '../context/BasicContext';
 import introductionThumbnail from './../assets/introductionThumbnail.png';
 import { FaCreditCard, FaPaypal, FaCcVisa, FaCcMastercard } from 'react-icons/fa';
+import banContact from './../assets/banContact.png';
+import masterCard from './../assets/masterCard.png';
+import ideal from './../assets/ideal.png';
+import paypal from './../assets/payPal.png';
+import applePay from './../assets/applePay.png';
+import applePayBlack from './../assets/applePayBlack.png';
+
+
+
 
 function VideoModal({ video, onClose }) {
   const options = useContext(BasicContext);
   const purchaseOptions = [
-    { kind: 'Voor 1 Kind', value: 24 },
-    { kind: 'Voor broers en zussen (max 4)', value: 30 },
-    { kind: 'Voor volwassenen', value: 35 },
+    { kind: 'Voor 1 Kind', value: 12.95 },
+    { kind: 'Voor Gezinnen', value: 16.95 },
+    { kind: 'Voor Volwassenen', value: 14.95 },
   ];
 
   const [selectedOption, setSelectedOption] = useState(purchaseOptions[0]);
@@ -117,10 +126,10 @@ function VideoModal({ video, onClose }) {
       <div className="absolute flex flex-row items-center justify-between w-full top-0 sm:p-4 p-2">
         <div className="flex flex-row items-center sm:gap-4 gap-2">
           <label className="text-red-950 font-black sm:text-xs text-[9px] p-2 bg-white uppercase shadow-md rounded-sm">
-            New Video 2024
+            Nieuwe Video 2024
           </label>
           <label className="text-red-950 font-black sm:text-xs text-[9px] p-2 bg-gradient-to-r from-yellow-400 to-amber-500 uppercase shadow-md rounded-sm">
-            BestSeller
+            Populair
           </label>
         </div>
         <div className="w-[3rem] h-[3rem] bg-white bg-opacity-0 hover:bg-opacity-10 transition duration-300 ease-in-out flex items-center justify-center rounded-full relative z-10">
@@ -158,7 +167,7 @@ function VideoModal({ video, onClose }) {
               text-red-950 font-black sm:text-md text-sm transform transition-transform duration-300 hover:scale-[103%]'
               onClick={handlePurchase}
             >
-              Purchase Now - <span className='sm:text-lg text-md ml-1'>${selectedOption.value}</span>
+              Video Personaliseren - <span className='sm:text-lg text-md ml-1'>€{selectedOption.value}</span>
             </button>
 
             <div className='flex flex-row items-center gap-5'>
@@ -167,7 +176,7 @@ function VideoModal({ video, onClose }) {
                 onClick={toggleVoucherInput}
               >
                 <FontAwesomeIcon icon={faGift}/>
-                Buy Voucher
+                Koop tegoedbon
               </button>
 
               {isVoucherInputVisible && (
@@ -175,29 +184,30 @@ function VideoModal({ video, onClose }) {
                   type="text"
                   value={voucherCode}
                   onChange={(e) => setVoucherCode(e.target.value)}
-                  placeholder="Enter Voucher Code"
+                  placeholder="Voer vouchercode in"
                   className='p-2 border border-gray-300 rounded-md w-full sm:text-sm text-xs'
                 />
               )}
             </div>
  {/* ....................................... */}
-            <div className='flex md:flex-row flex-col items-center md:gap-0 gap-8 md:justify-between w-full md:pr-10'>
+            <div className='flex md:flex-row flex-col items-center md:gap-0 gap-8 md:justify-between w-full'>
                   <div className='mt-6 flex flex-col items-start gap-4'>
                     <p className='text-green-500 font-semibold sm:text-sm text-xs'>Direct beschikbaar</p>
                     <ul className='text-gray-700 sm:text-xs text-[10px] flex flex-col items-start gap-2'>
-                      <li> <span className='mr-2'>✓</span> Gepersonaliseerde video</li>
-                      <li> <span className='mr-2'>✓</span> Download binnen enkele minuten na aankoop</li>
-                      <li> <span className='mr-2'>✓</span> Ontvang ook via WhatsApp of kies een leverdatum</li>
-                      <li> <span className='mr-2'>✓</span> Steun CliniClowns met je aankoop</li>
-                      <li> <span className='mr-2'>✓</span> Veilig betalen</li>
+                      <li> <span className='mr-2 text-nowrap'>✓</span> Gepersonaliseerde video</li>
+                      <li> <span className='mr-2 text-nowrap'>✓</span> Download binnen enkele minuten na aankoop</li>
+                      <li> <span className='mr-2 text-nowrap'>✓</span> Ontvang nu ook via WhatsApp en kies een leverdatum</li>
+                      <li> <span className='mr-2 text-nowrap'>✓</span> Steun CliniClowns met je aankoop</li>
+                      <li> <span className='mr-2 text-nowrap'>✓</span> Veilig betalen</li>
                     </ul>
                   </div>
-                  <div className="flex gap-4 items-center justify-center">
-                    <FaCreditCard size={20} className="text-blue-500" />
-                    <FaPaypal size={20} className="text-blue-600" />
-                    <FaCcVisa size={20} className="text-blue-700" />
-                    <FaCcMastercard size={20} className="text-red-600" />
-                  </div>
+                  <div className='flex flex-row items-center justify-between gap-4'>
+                             <div className=''> <img src={ideal} alt="iDeal" className='h-[2rem] w-auto' /></div>
+                             <div className=''> <img src={banContact} alt="Bancontact" className='h-[1.8rem] w-auto' /></div>
+                             <div className=''> <img src={masterCard} alt="MasterCard" className='h-[2.1rem] w-auto' /></div>
+                             <div className=''> <img src={applePayBlack} alt="Apple Pay" className='h-[1.6rem] w-auto' /></div>
+                             <div className=''> <img src={paypal} alt="PayPal" className='h-[1.6rem] w-auto' /></div>
+                   </div>
             </div>
           
           </div>

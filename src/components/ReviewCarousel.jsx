@@ -8,22 +8,23 @@ import 'swiper/css/pagination';
 function ReviewCarousel() {
   const reviews = [
     {
-      text: "The personalized Sinterklaas video was magical! My son couldn't believe that Sinterklaas mentioned his name and the things he asked for. It truly made his day!",
+      text: "De gepersonaliseerde Sinterklaasvideo was magisch! Mijn zoon kon niet geloven dat Sinterklaas zijn naam noemde en de dingen die hij had gevraagd. Het maakte zijn dag echt bijzonder!",
       name: "Sarah Verhoeven",
       location: "Rotterdam",
     },
     {
-      text: "Our kids were amazed by the Sinterklaas video! It was such a special touch to our holiday celebrations. They still talk about how Sinterklaas knew so much about them!",
+      text: "Onze kinderen waren verbaasd over de Sinterklaasvideo! Het was zo'n speciale toevoeging aan onze feestviering. Ze praten nog steeds over hoe Sinterklaas zoveel over hen wist!",
       name: "Mark de Vries",
       location: "Amsterdam",
     },
     {
-      text: "The Sinterklaas video was beautifully done! My daughter smiled throughout the entire video. Thank you for making this holiday season extra special!",
+      text: "De Sinterklaasvideo was prachtig gemaakt! Mijn dochter glimlachte de hele video door. Bedankt dat jullie dit feestseizoen extra speciaal hebben gemaakt!",
       name: "Lotte Jansen",
       location: "Utrecht",
     }
   ];
 
+  
   return (
     <div className="relative w-full my-16">
       <Swiper

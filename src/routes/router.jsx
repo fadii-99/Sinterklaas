@@ -9,7 +9,7 @@ const ComingSoon = lazy(() => import('../pages/ComingSoon.jsx'));
 const Success=lazy(() => import('../pages/Success.jsx'));
 const PrivacyPolicy=lazy(() => import('../pages/PrivacyPolicy.jsx'));
 const TermsOfService=lazy(() => import('../pages/TermOfService.jsx'));
-
+const Pricing=lazy(() => import('../pages/Pricing.jsx'));
 
 const router = createBrowserRouter([
   {
@@ -23,6 +23,10 @@ const router = createBrowserRouter([
     [
       {
         index: true, element: ( <Suspense fallback={''}> <MainPage /> </Suspense>),
+      }
+      ,
+      {
+        path: '/Pricing', element: ( <Suspense fallback={''}> <Pricing /> </Suspense>),
       }
       ,
       {
