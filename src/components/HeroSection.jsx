@@ -5,11 +5,29 @@ import { faPlay } from '@fortawesome/free-solid-svg-icons';
 import useScrollAnimation from './useScrollAnimation';
 import avatar from './../assets/sinterklaas.png';
 import { BasicContext } from '../context/BasicContext';
+import introductionVideo from './../assets/introductionVideo.mp4';
+import VideoModal from './VideoModal';
+
 
 function HeroSection(props){
     const { setComingSoonModel } = useContext(BasicContext);
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [currentVideo, setCurrentVideo] = useState(null);
+    const [video, setVideo]=useState( { title: 'Greet Video', videoUrl: introductionVideo })
 
     
+    const closeModal = () => {
+        setModalOpen(false);
+      };
+    
+    
+      const handleCardClick = () => {
+        setCurrentVideo(video); 
+        setModalOpen(true);
+      };
+
+      
+
 
     return(
          <div
@@ -44,7 +62,7 @@ function HeroSection(props){
                 </p>
                 {props.showButton &&  <div className='flex flex-col items-start gap-4'>
                 <button
-                 onClick={() => setComingSoonModel(true)}
+                  onClick={handleCardClick}
                 className="py-4 px-10 bg-gradient-to-r from-yellow-400 to-amber-500 flex items-center justify-center space-x-2 rounded-md
                     text-red-950 font-black sm:text-sm text-xs transform transition-transform duration-300 hover:scale-[103%] 
                     w-full "
@@ -65,14 +83,11 @@ function HeroSection(props){
                     <span className='text-white font-black sm:text-sm text-xs'>Bekijk alle video's</span>
                 </div>
             </div> }
-           
-            
          </div>
-                
+         {isModalOpen && currentVideo && (
+        <VideoModal video={currentVideo} onClose={closeModal} />
+      )}  
             </div>
-
-
-
     )}
 
 export default HeroSection;
