@@ -3,6 +3,7 @@ import React, { useContext, useState } from "react";
 import { BasicContext } from "../context/BasicContext";
 import VideoModel from './../components/VideoModal';
 import introductionVideo from './../assets/introductionVideo.mp4';
+import MultiStepForm from '../pages/MultiStepForm';
 
 
 const videoPrices = [
@@ -27,20 +28,16 @@ const letterPrices = [
 
 
 function Pricing() {
-  const { setComingSoonModel } = useContext(BasicContext);
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [currentVideo, setCurrentVideo] = useState(null);
-  const [video, setVideo]=useState( { title: 'Greet Video', videoUrl: introductionVideo })
+  const { setSelectedVideo } = useContext(BasicContext);
+    const [isModalOpen, setIsModalOpen] = useState(false); 
+    const video = { title: 'Greet Video', videoUrl: introductionVideo };
+  
+    const openModal = () => {
+        setIsModalOpen(true);
+        setSelectedVideo(video);
 
-  const closeModal = () => {
-    setModalOpen(false);
-  };
-
-
-  const handleCardClick = () => {
-    setCurrentVideo(video); 
-    setModalOpen(true);
-  };
+    }
+    const closeModal = () => setIsModalOpen(false);
 
 
   const renderPrices = (prices) =>
@@ -76,16 +73,14 @@ function Pricing() {
 
       <div className="mb-24">
         <button
-         onClick={handleCardClick}
+         onClick={ openModal}
           className="py-4 px-10 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-md text-red-950 font-black sm:text-sm text-xs 
                      transform transition-transform duration-300 hover:scale-[103%]"
         >
           BESTELLEN
         </button>
       </div>
-      {isModalOpen && currentVideo && (
-        <VideoModel video={currentVideo} onClose={closeModal} />
-      )}
+      {isModalOpen && (<MultiStepForm onClose={closeModal} />)}
     </div>
   );
 }

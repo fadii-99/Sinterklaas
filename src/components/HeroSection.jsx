@@ -6,27 +6,21 @@ import useScrollAnimation from './useScrollAnimation';
 import avatar from './../assets/sinterklaas.png';
 import { BasicContext } from '../context/BasicContext';
 import introductionVideo from './../assets/introductionVideo.mp4';
-import VideoModal from './VideoModal';
+import MultiStepForm from '../pages/MultiStepForm';
+
 
 
 function HeroSection(props){
-    const { setComingSoonModel } = useContext(BasicContext);
-    const [isModalOpen, setModalOpen] = useState(false);
-    const [currentVideo, setCurrentVideo] = useState(null);
-    const [video, setVideo]=useState( { title: 'Greet Video', videoUrl: introductionVideo })
+    const { setSelectedVideo } = useContext(BasicContext);
+    const [isModalOpen, setIsModalOpen] = useState(false); 
+    const video = { title: 'Greet Video', videoUrl: introductionVideo };
+  
+    const openModal = () => {
+        setIsModalOpen(true);
+        setSelectedVideo(video);
 
-    
-    const closeModal = () => {
-        setModalOpen(false);
-      };
-    
-    
-      const handleCardClick = () => {
-        setCurrentVideo(video); 
-        setModalOpen(true);
-      };
-
-      
+    }
+    const closeModal = () => setIsModalOpen(false);
 
 
     return(
@@ -62,7 +56,7 @@ function HeroSection(props){
                 </p>
                 {props.showButton &&  <div className='flex flex-col items-start gap-4'>
                 <button
-                  onClick={handleCardClick}
+                  onClick={openModal}
                 className="py-4 px-10 bg-gradient-to-r from-yellow-400 to-amber-500 flex items-center justify-center space-x-2 rounded-md
                     text-red-950 font-black sm:text-sm text-xs transform transition-transform duration-300 hover:scale-[103%] 
                     w-full "
@@ -84,9 +78,7 @@ function HeroSection(props){
                 </div>
             </div> }
          </div>
-         {isModalOpen && currentVideo && (
-        <VideoModal video={currentVideo} onClose={closeModal} />
-      )}  
+         {isModalOpen && (<MultiStepForm onClose={closeModal} />)}
             </div>
     )}
 

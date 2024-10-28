@@ -5,17 +5,27 @@ export const BasicContext=createContext();
 
 function BasicProvider(props){
     const [showFormModel,setShowFormModel]=useState(false);
-    const [purchaseData,setPurchaseData]=useState({});
     const [comingSoonModel,setComingSoonModel] = useState(false);
+    const [selectedVideo, setSelectedVideo] = useState();
+    const [videoFormData, setVideoFormData] = useState();
+    const [personalizationFormData,setPersonalizationFormData] = useState();
+    const [giftFormData, setGiftFormData] = useState();
+
 
 
     const options={
         showFormModel,
         setShowFormModel,
-        purchaseData,
-        setPurchaseData,
         comingSoonModel,
-        setComingSoonModel
+        setComingSoonModel,
+        selectedVideo,
+        setSelectedVideo,
+        videoFormData,
+        setVideoFormData,
+        personalizationFormData,
+        setPersonalizationFormData,
+        giftFormData,
+        setGiftFormData
     }
     
     

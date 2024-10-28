@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState ,  useContext } from 'react';
 import { Navigation, Pagination, A11y, EffectCoverflow, Autoplay } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -8,29 +8,28 @@ import 'swiper/css/scrollbar';
 import VideoCard from './VideoCard';
 import VideoModal from './VideoModal';
 import introductionVideo from './../assets/introductionVideo.mp4';
+import MultiStepForm from '../pages/MultiStepForm';
+import { BasicContext } from '../context/BasicContext';
 
 
 function VideoCarousel() {
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [currentVideo, setCurrentVideo] = useState(null);
+  const { setSelectedVideo } = useContext(BasicContext);
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const video = { title: 'Greet Video', videoUrl: introductionVideo };
 
-  
-  const videoData = [
-    { title: 'Greet Video', videoUrl: introductionVideo },
-    // { title: 'Christmas Kitchen', videoUrl: 'https://www.youtube.com/watch?v=KB3fR4RBCtg' },
-    // { title: 'Letter to Santa', videoUrl: 'https://www.youtube.com/watch?v=sCDHHt-o6oA' },
-    // { title: 'Sinterklaas House', videoUrl: 'https://www.youtube.com/watch?v=H5id5b2svcM' },
-    // { title: 'Gift Factory', videoUrl: 'https://www.youtube.com/watch?v=HX4wDYbZTNc' },
-  ];
 
-  const handleCardClick = (video) => {
-    setCurrentVideo(video); 
-    setModalOpen(true);
-  };
+  const openModal = () => {
+      setIsModalOpen(true);
+      setSelectedVideo(video);
 
-  const closeModal = () => {
-    setModalOpen(false);
-  };
+  }
+
+  const closeModal = () =>  {
+    
+    setIsModalOpen(false);
+
+  }
+
 
   return (
     <div className="relative">
@@ -64,15 +63,13 @@ function VideoCarousel() {
           }
         }}
       >
-        {videoData.map((video, index) => (
-          <SwiperSlide key={index} className='shadow-md rounded-lg'>
+          <SwiperSlide  className='shadow-md rounded-lg'>
             <VideoCard 
               title={video.title} 
               videoUrl={video.videoUrl} 
-              onClick={() => handleCardClick(video)}
+              onClick={openModal}
             />
           </SwiperSlide>
-        ))}
 
         {/* Custom Navigation Buttons */}
         <div className="custom-swiper-button-prev absolute left-0 transform -translate-y-1/2 top-1/2 z-10 p-2 bg-transparent">
@@ -89,9 +86,8 @@ function VideoCarousel() {
 
       {/* Pagination Dots */}
 
-      {isModalOpen && currentVideo && (
-        <VideoModal video={currentVideo} onClose={closeModal} />
-      )}
+      {isModalOpen && (<MultiStepForm onClose={closeModal} />)}
+
     </div>
   );
 }
