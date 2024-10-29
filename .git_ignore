@@ -1,0 +1,5 @@
+static/generated_audios/
+static/generated_videos/
+static/images
+.history
+env
