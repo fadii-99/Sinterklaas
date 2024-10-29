@@ -4,7 +4,6 @@ import router from './routes/router';
 import './index.css';
 import BasicProvider from './context/BasicContext';
 
-
 function App() {
 
   return (

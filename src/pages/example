@@ -1,0 +1,168 @@
+// const handleFamilyNameChange = (e) => {
+//   setFamilyName(e.target.value);
+//   setErrors((prev) => ({ ...prev, familyName: false })); // Clear any error
+// };
+
+// // Add family name to the list with validation
+// const handleFamilyNameSubmit = () => {
+//   if (familyName.trim() && familyNames.length < phoneLimit) { // Ensure valid input and within limit
+//     setFamilyNames([...familyNames, familyName]);
+//     setFamilyName(''); // Clear input field
+//     setShowInput(false); // Hide input field
+//   } else {
+//     setErrors((prev) => ({
+//       ...prev,
+//       familyName: 'Please enter a name',
+//     }));
+//   }
+// };
+
+
+
+
+// const handleFriendNameChange = (e) => {
+//   setFriendName(e.target.value);
+//   setErrors((prev) => ({ ...prev, friendName: false })); // Clear any error
+// };
+
+// // Add family name to the list with validation
+// const handleFriendNameSubmit = () => {
+//   if (friendName.trim() && friendNames.length < phoneLimit) { // Ensure valid input and within limit
+//     setFriendNames([...friendNames, friendName]);
+//     setFriendName(''); // Clear input field
+//     setShowInput(false); // Hide input field
+//   } else {
+//     setErrors((prev) => ({
+//       ...prev,
+//       friendName: 'Please enter a name.',
+//     }));
+//   }
+// };
+
+
+
+
+// const handleAddFriendNameClick = () => setShowFriendInput(true);
+// const handleAddFamilyNameClick = () => setShowFamilyInput(true);
+
+
+
+  // Set the phone number limit based on data.kind
+  // let phoneLimit = 0;
+  // if (videoFormData?.product.kind === 'Voor 1 Kind' ||videoFormData?.product.kind === 'Voor volwassenen') {
+  //   phoneLimit = 1;
+  // } else if (videoFormData?.product.kind === 'Voor broers en zussen (max 4)') {
+  //   phoneLimit = 4;
+  // }
+
+  // const [familyName, setFamilyName] = useState(''); 
+// const [familyNames, setFamilyNames] = useState([]);
+
+
+// const [friendName, setFriendName] = useState(''); 
+// const [friendNames, setFriendNames] = useState([]); 
+
+// const [showFamilyInput, setShowFamilyInput]= useState(false);
+// const [showFriendInput, setShowFriendInput]= useState(false);
+            {/* <div className="flex flex-col gap-4 items-start md:border-t md:py-10">
+              <div className="flex flex-row items-end justify-between w-full gap-4">
+                <div className="flex flex-col items-start gap-4">
+                  <h1 className="text-gray-700 font-semibold text-xs text-nowrap">Add Family Names</h1>
+                  <button
+                    onClick={handleAddFamilyNameClick} // Show input field
+                    disabled={familyNames.length >= 4 } // Limit control
+                    className={`px-4 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-md text-red-950 font-black 
+                      text-xs text-nowrap ${familyNames.length >= 4 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    <FontAwesomeIcon icon={faPhone} className="mr-2" /> Add Family Name
+                  </button>
+                </div>
+
+                {showFamilyInput && (
+                  <div className="flex gap-2 items-center mt-2 w-full">
+                    <input
+                      type="text"
+                      placeholder="Enter family name"
+                      value={familyName}
+                      onChange={handleFamilyNameChange} // Handle input change
+                      className="p-3 border rounded-md text-xs w-full"
+                    />
+                    <button
+                      onClick={handleFamilyNameSubmit} // Add family name to list
+                      className="px-4 py-3 bg-gray-900 text-white rounded-md text-xs"
+                    >
+                      Enter
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {errors.familyName && (
+                <p className="text-red-500 text-xs">{errors.familyName}</p> // Display error
+              )}
+
+              {familyNames.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {familyNames.map((name, index) => (
+                    <div key={index} className="bg-gray-100 p-3 rounded-md flex items-center gap-2">
+                      <FontAwesomeIcon icon={faPhone} className="text-gray-600 text-sm" />
+                      <span className="text-xs">{name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+
+
+
+            {/* ............................................................................................................... */}
+
+            {/* <div className="flex flex-col gap-4 items-start md:border-t md:py-10">
+              <div className="flex flex-row items-end justify-between w-full gap-4">
+                <div className="flex flex-col items-start gap-4">
+                  <h1 className="text-gray-700 font-semibold text-xs text-nowrap">Add Friend Names</h1>
+                  <button
+                    onClick={handleAddFriendNameClick} // Show input field
+                    disabled={familyNames.length >= 4} // Limit control
+                    className={`px-4 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-md text-red-950 font-black 
+                      text-xs text-nowrap ${familyNames.length >= 4 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    <FontAwesomeIcon icon={faPhone} className="mr-2" /> Add Friend Name
+                  </button>
+                </div>
+
+                {showFriendInput && (
+                  <div className="flex gap-2 items-center mt-2 w-full">
+                    <input
+                      type="text"
+                      placeholder="Enter friend name"
+                      value={friendName}
+                      onChange={handleFriendNameChange} // Handle input change
+                      className="p-3 border rounded-md text-xs w-full"
+                    />
+                    <button
+                      onClick={handleFriendNameSubmit} // Add family name to list
+                      className="px-4 py-3 bg-gray-900 text-white rounded-md text-xs"
+                    >
+                      Enter
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {errors.friendName && (
+                <p className="text-red-500 text-xs">{errors.friendName}</p> // Display error
+              )}
+
+              {friendNames.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {friendNames.map((name, index) => (
+                    <div key={index} className="bg-gray-100 p-3 rounded-md flex items-center gap-2">
+                      <FontAwesomeIcon icon={faPhone} className="text-gray-600 text-sm" />
+                      <span className="text-xs">{name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>  */}

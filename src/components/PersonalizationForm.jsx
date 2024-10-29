@@ -5,41 +5,44 @@ import { BasicContext } from '../context/BasicContext';
 
 
 
-function PersonalizationForm({ onClose, onNext }) {
+function PersonalizationForm({ onClose, onNext , onBack }) {
   const {  videoFormData , setPersonalizationFormData } = useContext(BasicContext);
-  const [email, setEmail] = useState('');
+  // const [email, setEmail] = useState('');
 
-  const [date, setDate] = useState(() => new Date().toISOString().split('T')[0]); // Initialize with today's date
-  const [time, setTime] = useState('12:00'); // Default time
-  const [dateTime, setDateTime] = useState(''); // Combined date and time string
+  // const [date, setDate] = useState(() => new Date().toISOString().split('T')[0]); // Initialize with today's date
+  // const [time, setTime] = useState('12:00'); // Default time
+  // const [dateTime, setDateTime] = useState(''); // Combined date and time string
 
-  const [images, setImages] = useState([]); // Array to store selected image files
+  // const [images, setImages] = useState([]); // Array to store selected image files
   const [loading, setLoading] = useState(false); // Loading state to control the loader
   const [validationError, setValidationError] = useState(false);
   const [purchaseLoader, setPurchaseLoader] = useState(false); // State to control purchase button loader
-const [childName, setChildName] = useState('');
-const [childAge, setChildAge] = useState('');
-const [childHobby, setChildHobby] = useState('');
-const [schoolName, setSchoolName] = useState('');
-const [teacherName, setTeacherName] = useState('');
-const [subjectActivity, setSubjectActivity] = useState('');
-const [friendNames,setFriendNames] = useState('');
-const [familyNames,setFamilyNames] = useState('');
+// const [childName, setChildName] = useState('');
+// const [childAge, setChildAge] = useState('');
+// const [childHobby, setChildHobby] = useState('');
+// const [schoolName, setSchoolName] = useState('');
+// const [teacherName, setTeacherName] = useState('');
+// const [subjectActivity, setSubjectActivity] = useState('');
+// const [friendNames,setFriendNames] = useState('');
+// const [familyNames,setFamilyNames] = useState('');
+
+const [formState, setFormState] = useState({
+  email: '',
+  childName: '',
+  childAge: '',
+  childHobby: '',
+  schoolName: '',
+  teacherName: '',
+  subjectActivity: '',
+  familyNames: '',
+  friendNames: '',
+  date: new Date().toISOString().split('T')[0],
+  time: '12:00',
+  dateTime: '', // This will be automatically updated when date or time changes
+  images: []
+});
 
 
-
-
-// const [familyName, setFamilyName] = useState(''); 
-// const [familyNames, setFamilyNames] = useState([]);
-
-
-// const [friendName, setFriendName] = useState(''); 
-// const [friendNames, setFriendNames] = useState([]); 
-
-// const [showFamilyInput, setShowFamilyInput]= useState(false);
-// const [showFriendInput, setShowFriendInput]= useState(false);
-
-// ........
 const [errors, setErrors] = useState({
   email: false,
   childName: false,
@@ -56,190 +59,78 @@ const [errors, setErrors] = useState({
 });
 
 
-// const handleFamilyNameChange = (e) => {
-//   setFamilyName(e.target.value);
-//   setErrors((prev) => ({ ...prev, familyName: false })); // Clear any error
-// };
+const handleChange = (event) => {
+  const { name, value, type, files } = event.target;
 
-// // Add family name to the list with validation
-// const handleFamilyNameSubmit = () => {
-//   if (familyName.trim() && familyNames.length < phoneLimit) { // Ensure valid input and within limit
-//     setFamilyNames([...familyNames, familyName]);
-//     setFamilyName(''); // Clear input field
-//     setShowInput(false); // Hide input field
-//   } else {
-//     setErrors((prev) => ({
-//       ...prev,
-//       familyName: 'Please enter a name',
-//     }));
-//   }
-// };
-
-
-
-
-// const handleFriendNameChange = (e) => {
-//   setFriendName(e.target.value);
-//   setErrors((prev) => ({ ...prev, friendName: false })); // Clear any error
-// };
-
-// // Add family name to the list with validation
-// const handleFriendNameSubmit = () => {
-//   if (friendName.trim() && friendNames.length < phoneLimit) { // Ensure valid input and within limit
-//     setFriendNames([...friendNames, friendName]);
-//     setFriendName(''); // Clear input field
-//     setShowInput(false); // Hide input field
-//   } else {
-//     setErrors((prev) => ({
-//       ...prev,
-//       friendName: 'Please enter a name.',
-//     }));
-//   }
-// };
-
-
-
-
-// const handleAddFriendNameClick = () => setShowFriendInput(true);
-// const handleAddFamilyNameClick = () => setShowFamilyInput(true);
-
-
-
-  // Set the phone number limit based on data.kind
-  // let phoneLimit = 0;
-  // if (videoFormData?.product.kind === 'Voor 1 Kind' ||videoFormData?.product.kind === 'Voor volwassenen') {
-  //   phoneLimit = 1;
-  // } else if (videoFormData?.product.kind === 'Voor broers en zussen (max 4)') {
-  //   phoneLimit = 4;
-  // }
-
-  
-// ...................................................
-const handleFamilyChange = (e) => {
-  setFamilyNames(e.target.value);
-  setErrors((prev) => ({ ...prev, friendNames: false })); // Clear email error
+  switch (type) {
+    case 'file':
+      const selectedFiles = Array.from(files);
+      if (formState.images.length + selectedFiles.length > 1) return; // Limit to 3 images
+      setFormState(prevState => ({ ...prevState, images: [...prevState.images, ...selectedFiles] }));
+      break;
+    case 'date':
+    case 'time':
+      const newDate = name === 'date' ? value : formState.date;
+      const newTime = name === 'time' ? value : formState.time;
+      setFormState(prevState => ({
+        ...prevState,
+        [name]: value,
+        dateTime: `${newDate}T${newTime}`
+      }));
+      break;
+    default:
+      setFormState(prevState => ({ ...prevState, [name]: value }));
+      setErrors(prev => ({ ...prev, [name]: !value.trim() })); // Optional: Validate fields on the fly
+  }
 };
 
 
-const handleFriendChange = (e) => {
-  setFriendNames(e.target.value);
-  setErrors((prev) => ({ ...prev, familyNames: false })); // Clear email error
-};
-
-  // Email Handler
-const handleEmailChange = (e) => {
-  setEmail(e.target.value);
-  setErrors((prev) => ({ ...prev, email: false })); // Clear email error
-};
-
-// Child Name Handler
-const handleChildNameChange = (e) => {
-  setChildName(e.target.value);
-  setErrors((prev) => ({ ...prev, childName: false })); // Clear child name error
-};
-
-// Child Age Handler
-const handleChildAgeChange = (e) => {
-  setChildAge(e.target.value);
-  setErrors((prev) => ({ ...prev, childAge: false })); // Clear child age error
-};
-
-// Child Hobby Handler
-const handleChildHobbyChange = (e) => {
-  setChildHobby(e.target.value);
-  setErrors((prev) => ({ ...prev, childHobby: false })); // Clear child hobby error
-};
-
-// Image Selection Handler
-const handleImageChange = (event) => {
-  const selectedFiles = Array.from(event.target.files);
-  if (images.length + selectedFiles.length > 3) return;
-  setImages((prevImages) => [...prevImages, ...selectedFiles]);
-  setErrors((prev) => ({ ...prev, images: false })); // Clear image error
-};
-
-
-// Date Change Handler
-const handleDateChange = (e) => {
-  const selectedDate = e.target.value;
-  setDate(selectedDate);
-  setDateTime(`${selectedDate}T${time}`); // Combine date and time into one string
-  setErrors((prev) => ({ ...prev, dateTime: false })); // Clear date/time error
-};
-
-// Time Change Handler
-const handleTimeChange = (e) => {
-  const selectedTime = e.target.value;
-  setTime(selectedTime);
-  setDateTime(`${date}T${selectedTime}`); // Update the dateTime state
-  setErrors((prev) => ({ ...prev, dateTime: false })); // Clear date/time error
-};
-
-
-// School Name Handler
-const handleSchoolNameChange = (e) => {
-  setSchoolName(e.target.value);
-  setErrors((prev) => ({ ...prev, schoolName: false }));
-};
-
-// Teacher Name Handler
-const handleTeacherNameChange = (e) => {
-  setTeacherName(e.target.value);
-  setErrors((prev) => ({ ...prev, teacherName: false }));
-};
-
-// Subject/Activity Handler
-const handleSubjectActivityChange = (e) => {
-  setSubjectActivity(e.target.value);
-  setErrors((prev) => ({ ...prev, subjectActivity: false }));
-};
-
-
-
-// ..................................
 
 const validateForm = () => {
   const newErrors = {
-    email: !email.trim(),
-    childName: !childName.trim(),
-    childAge: !childAge.trim(),
-    childHobby: !childHobby.trim(),
-    images: images.length === 0,
-    dateTime: !dateTime,
-    schoolName: !schoolName.trim(),
-    teacherName: !teacherName.trim(),
-    subjectActivity: !subjectActivity.trim(),
+    email: !formState.email.trim(),
+    childName: !formState.childName.trim(),
+    childAge: !formState.childAge.trim(),
+    childHobby: !formState.childHobby.trim(),
+    images: formState.images.length === 0,
+    dateTime: !formState.dateTime,
+    schoolName: !formState.schoolName.trim(),
+    teacherName: !formState.teacherName.trim(),
+    subjectActivity: !formState.subjectActivity.trim(),
+    familyNames: !formState.familyNames.trim(),
+    friendNames: !formState.friendNames.trim(),
   };
 
   setErrors(newErrors);
-
   // Check if any errors exist
   return !Object.values(newErrors).includes(true);
 };
 
 
+
 const handleNextClick = () => {
   if (validateForm()) {
     const formData = {
-      email,
-      dateTime,
-      images,
-      childName,
-      childAge,
-      childHobby,
-      schoolName,
-      teacherName,
-      subjectActivity,
-      familyNames,
-      friendNames,
+      email: formState.email,
+      dateTime: formState.dateTime,
+      images: formState.images,
+      childName: formState.childName,
+      childAge: formState.childAge,
+      childHobby: formState.childHobby,
+      schoolName: formState.schoolName,
+      teacherName: formState.teacherName,
+      subjectActivity: formState.subjectActivity,
+      familyNames: formState.familyNames,
+      friendNames: formState.friendNames,
     };
     setPersonalizationFormData(formData);
-    console.log(formData);
+    console.log("Form Data:", formData);
     onNext(); // Proceed to the next step
   } else {
     setValidationError(true); // Show error message
   }
 };
+
 
 
   
@@ -270,16 +161,17 @@ const handleNextClick = () => {
            
               {/* Child Name and Age and Hobby */}
               <div className='flex flex-col gap-6 md:pb-10 pb-6'>
-                    <h1 className="sm:text-2xl text-xl font-light font-christmas bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 bg-clip-text text-transparent">Child Information</h1>
+                    <h1 className="sm:text-2xl text-xl font-light font-christmas bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 bg-clip-text text-transparent">Informatie over het Kind</h1>
                     <div className='flex md:flex-row flex-col gap-6  w-full'>
                         <div className='flex flex-col items-start gap-2 w-full'>
-                          <label className="text-gray-700 font-semibold  text-xs">Enter Child Name</label>
+                          <label className="text-gray-700 font-semibold  text-xs">Voer kindernaam in</label>
                           <input
                               type="text"
-                              placeholder="Child Name"
-                              value={childName}
+                              name='childName'
+                              placeholder="Kindernaam"
+                              value={formState.childName}
                               maxLength={20}
-                              onChange={handleChildNameChange}
+                              onChange={handleChange}
                               className={`p-3 border rounded-md w-full focus:outline-none  text-xs ${
                                 errors.childName ? 'border-red-500' : 'border-gray-300'
                               }`}
@@ -287,13 +179,14 @@ const handleNextClick = () => {
                         </div>
 
                         <div className='flex flex-col items-start gap-2 w-full'>
-                          <label className="text-gray-700 font-semibold  text-xs">Enter Child Age</label>
+                          <label className="text-gray-700 font-semibold  text-xs">Voer leeftijd van het kind in</label>
                           <input
+                            name='childAge'
                               type="number"
                               min="0"
-                              placeholder="Child Age"
-                              value={childAge}
-                              onChange={handleChildAgeChange}
+                              placeholder="Leeftijd van het kind"
+                              value={formState.childAge}
+                              onChange={handleChange}
                               className={`p-3 border rounded-md w-full focus:outline-none  text-xs ${
                                 errors.childAge ? 'border-red-500' : 'border-gray-300'
                               }`}
@@ -302,13 +195,14 @@ const handleNextClick = () => {
                         </div>
 
                         <div className='flex flex-col items-start gap-2 w-full'>
-                          <label className="text-gray-700 font-semibold  text-xs">Enter Child Hobby</label>
+                          <label className="text-gray-700 font-semibold  text-xs">Voer hobby van het kind in</label>
                           <input
+                            name='childHobby'
                               type="text"
-                              placeholder="Child Hobby"
-                              value={childHobby}
+                              placeholder="Hobby van het kind"
+                              value={formState.childHobby}
                               maxLength={30}
-                              onChange={handleChildHobbyChange}
+                              onChange={handleChange}
                               className={`p-3 border rounded-md w-full focus:outline-none  text-xs ${
                                 errors.childHobby ? 'border-red-500' : 'border-gray-300'
                               }`}
@@ -322,17 +216,18 @@ const handleNextClick = () => {
                 <div className='flex flex-col gap-6 md:pb-10 pb-6'>
                     <h1 className="sm:text-2xl text-xl font-light font-christmas 
                     bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 bg-clip-text text-transparent">
-                      Friends/Family Name
+                      Namen van Vrienden/Familie
                     </h1>
                     <div className='flex md:flex-row flex-col gap-6  w-full'>
                         <div className='flex flex-col items-start gap-2 w-full'>
-                          <label className="text-gray-700 font-semibold  text-xs">Enter Friend Name</label>
+                          <label className="text-gray-700 font-semibold  text-xs">Voer naam van vrienden in</label>
                           <input
                               type="text"
-                              placeholder="Friend Names"
-                              value={friendNames}
+                                name='friendNames'
+                              placeholder="Namen van vrienden"
+                              value={formState.friendNames}
                               maxLength={40}
-                              onChange={handleFriendChange}
+                              onChange={handleChange}
                               className={`p-3 border rounded-md w-full focus:outline-none  text-xs ${
                                 errors.friendNames ? 'border-red-500' : 'border-gray-300'
                               }`}
@@ -340,13 +235,14 @@ const handleNextClick = () => {
                         </div>
 
                         <div className='flex flex-col items-start gap-2 w-full'>
-                          <label className="text-gray-700 font-semibold  text-xs">Enter Family Names</label>
+                          <label className="text-gray-700 font-semibold  text-xs">Voer familienamen in</label>
                           <input
                               type="text"
+                                name='familyNames'
                               maxLength="40"
-                              placeholder="Family Names"
-                              value={familyNames}
-                              onChange={handleFamilyChange}
+                              placeholder="Familienamen"
+                              value={formState.familyNames}
+                              onChange={handleChange}
                               className={`p-3 border rounded-md w-full focus:outline-none  text-xs ${
                                 errors.familyNames ? 'border-red-500' : 'border-gray-300'
                               }`}
@@ -362,17 +258,18 @@ const handleNextClick = () => {
 
                 {/* ........... */}
                 <div className='flex flex-col gap-6 md:py-10 pb-6 md:border-t'>
-                      <h1 className="sm:text-2xl text-xl font-light font-christmas bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 bg-clip-text text-transparent">School Information</h1>
+                      <h1 className="sm:text-2xl text-xl font-light font-christmas bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 bg-clip-text text-transparent">Schoolinformatie</h1>
                       <div className='flex flex-col items-start gap-6 '>
                           <div className='flex md:flex-row flex-col items-center gap-6 w-full '>
                           <div className='flex flex-col items-start gap-2 w-full'>
-                              <label className="text-gray-700 font-semibold  text-xs">Enter School Name</label>
+                              <label className="text-gray-700 font-semibold  text-xs">Voer schoolnaam in</label>
                               <input
                                 type="text"
-                                placeholder="School Name"
-                                value={schoolName}
+                                name='schoolName'
+                                placeholder="Schoolnaam"
+                                value={formState.schoolName}
                                 maxLength={30}
-                                onChange={handleSchoolNameChange}
+                                onChange={handleChange}
                                 className={`p-3 border rounded-md w-full focus:outline-none text-xs ${
                                   errors.schoolName ? 'border-red-500' : 'border-gray-300'
                                 }`}
@@ -380,13 +277,14 @@ const handleNextClick = () => {
                           </div>
                           <div className="flex md:flex-row flex-col gap-6 md:py-0 md:pb-0 pb-6 w-full">
                             <div className="flex flex-col items-start gap-2 w-full">
-                              <label className="text-gray-700 font-semibold  text-xs">Enter Teacher Name</label>
+                              <label className="text-gray-700 font-semibold  text-xs">Voer naam van de leraar in</label>
                               <input
                                 type="text"
-                                placeholder="Teacher Name"
-                                value={teacherName}
+                                name='teacherName'
+                                placeholder="Naam van de leraar"
+                                value={formState.teacherName}
                                 maxLength={30}
-                                onChange={handleTeacherNameChange}
+                                onChange={handleChange}
                                 className={`p-3 border rounded-md w-full focus:outline-none text-xs ${
                                   errors.teacherName ? 'border-red-500' : 'border-gray-300'
                                 }`}
@@ -395,13 +293,14 @@ const handleNextClick = () => {
                           </div>
                       </div>
                       <div className='flex flex-col items-start gap-2 w-full'>
-                              <label className="text-gray-700 font-semibold  text-xs">Enter Subject/Activity Child Enjoys</label>
+                              <label className="text-gray-700 font-semibold  text-xs">Voer het favoriete onderwerp/activiteit van het kind in</label>
                               <input
                                   type="text"
-                                  placeholder="Subject or Activity"
-                                  value={subjectActivity}
+                                  name='subjectActivity'
+                                  placeholder="Onderwerp of activiteit"
+                                  value={formState.subjectActivity}
                                   maxLength={30}
-                                  onChange={handleSubjectActivityChange}
+                                  onChange={handleChange}
                                   className={`p-3 border rounded-md w-full focus:outline-none text-xs ${
                                     errors.subjectActivity ? 'border-red-500' : 'border-gray-300'
                                   }`}
@@ -414,17 +313,18 @@ const handleNextClick = () => {
              
 
               <div className='flex flex-col items-start gap-6 w-full md:border-t md:py-10 pb-6'>
-                <h1 className="sm:text-2xl text-xl font-light font-christmas bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 bg-clip-text text-transparent">Personal Information</h1>
+                <h1 className="sm:text-2xl text-xl font-light font-christmas bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 bg-clip-text text-transparent">Persoonlijke Informatie</h1>
                 <div className='flex flex-col items-start gap-6 w-full'>
                  
               {/* Email and date */}
                  <div className='flex flex-col items-start gap-2 w-full'>
-                    <label className="text-gray-700 font-semibold  text-xs">Enter Your Email</label>
+                    <label className="text-gray-700 font-semibold  text-xs">Voer uw e-mailadres in</label>
                     <input
                         type="email"
-                        placeholder="Enter your email"
-                        value={email}
-                        onChange={handleEmailChange}
+                        name='email'
+                        placeholder="Uw e-mailadres"
+                        value={formState.email}
+                        onChange={handleChange}
                         className={`p-3 border rounded-md w-full focus:outline-none  text-xs ${
                           errors.email ? 'border-red-500' : 'border-gray-300'
                         }`}
@@ -433,11 +333,12 @@ const handleNextClick = () => {
                  <div className="flex md:flex-row flex-col gap-6 md:py-0 md:pb-0 pb-6 w-full">
                   {/* Date Input */}
                   <div className="flex flex-col items-start gap-2 w-full">
-                    <label className="text-gray-700 font-semibold  text-xs">Enter Date</label>
+                    <label className="text-gray-700 font-semibold  text-xs">Voer datum in</label>
                     <input
                         type="date"
-                        value={date}
-                        onChange={handleDateChange}
+                        name='date'
+                        value={formState.date}
+                        onChange={handleChange}
                         className={`p-3 border rounded-md w-full focus:outline-none  text-xs ${
                           errors.dateTime ? 'border-red-500' : 'border-gray-300'
                         }`}
@@ -446,10 +347,11 @@ const handleNextClick = () => {
 
                   {/* Time Slot Dropdown */}
                   <div className="flex flex-col items-start gap-2 w-full">
-                    <label className="text-gray-700 font-semibold  text-xs">Select Time</label>
+                    <label className="text-gray-700 font-semibold  text-xs">Selecteer tijd</label>
                     <select
-                        value={time}
-                        onChange={handleTimeChange}
+                        value={formState.time}
+                        name='time'
+                        onChange={handleChange}
                         className={`p-3 border rounded-md w-full focus:outline-none  text-xs ${
                           errors.dateTime ? 'border-red-500' : 'border-gray-300'
                         }`}
@@ -467,13 +369,14 @@ const handleNextClick = () => {
             
             {/* Image / Media Upload */}
             <div className="flex flex-col md:gap-2 gap-1 md:border-t md:py-10 pb-4">
-              <label className="text-gray-700 font-semibold  text-xs">Upload Image</label>
+              <label className="text-gray-700 font-semibold  text-xs">Upload afbeelding</label>
               <div className="flex items-center gap-2">
                 <input
                     type="file"
+                    name='images'
                     accept="image/*"
-                    onChange={handleImageChange}
-                    className={`hidden ${images.length >= 3 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    onChange={handleChange}
+                    className={`hidden ${formState.images.length >= 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
                     id="image-upload"
                   />
                                 </div>
@@ -483,14 +386,14 @@ const handleNextClick = () => {
                     className={`px-4 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 flex items-center justify-center rounded-md
                       text-red-950 font-black  text-xs cursor-pointer border-2 ${
                         errors.images ? 'border-red-500' : 'border-yellow-400'
-                      } ${images.length >= 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      } ${formState.images.length >= 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
-                    <FontAwesomeIcon icon={faFileImage} className="mr-2" /> Choose Image
+                    <FontAwesomeIcon icon={faFileImage} className="mr-2" /> Afbeelding kiezen
                   </label>
 
                 {/* Display selected files */}
                 <div className="flex flex-row gap-2 flex-wrap">
-                  {images.map((file, index) => (
+                  {formState.images.map((file, index) => (
                     <div key={index} className="flex flex-col items-center gap-2 bg-gray-100 rounded-md p-2">
                       {file.type.startsWith('image/') ? (
                         <FontAwesomeIcon icon={faFileImage} className="text-gray-600" />
@@ -506,125 +409,34 @@ const handleNextClick = () => {
 
             {/* ...................................................................................................... */}
 
-            {/* <div className="flex flex-col gap-4 items-start md:border-t md:py-10">
-              <div className="flex flex-row items-end justify-between w-full gap-4">
-                <div className="flex flex-col items-start gap-4">
-                  <h1 className="text-gray-700 font-semibold text-xs text-nowrap">Add Family Names</h1>
-                  <button
-                    onClick={handleAddFamilyNameClick} // Show input field
-                    disabled={familyNames.length >= 4 } // Limit control
-                    className={`px-4 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-md text-red-950 font-black 
-                      text-xs text-nowrap ${familyNames.length >= 4 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  >
-                    <FontAwesomeIcon icon={faPhone} className="mr-2" /> Add Family Name
-                  </button>
-                </div>
 
-                {showFamilyInput && (
-                  <div className="flex gap-2 items-center mt-2 w-full">
-                    <input
-                      type="text"
-                      placeholder="Enter family name"
-                      value={familyName}
-                      onChange={handleFamilyNameChange} // Handle input change
-                      className="p-3 border rounded-md text-xs w-full"
-                    />
-                    <button
-                      onClick={handleFamilyNameSubmit} // Add family name to list
-                      className="px-4 py-3 bg-gray-900 text-white rounded-md text-xs"
-                    >
-                      Enter
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {errors.familyName && (
-                <p className="text-red-500 text-xs">{errors.familyName}</p> // Display error
-              )}
-
-              {familyNames.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {familyNames.map((name, index) => (
-                    <div key={index} className="bg-gray-100 p-3 rounded-md flex items-center gap-2">
-                      <FontAwesomeIcon icon={faPhone} className="text-gray-600 text-sm" />
-                      <span className="text-xs">{name}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-
-
-
-            {/* ............................................................................................................... */}
-
-            {/* <div className="flex flex-col gap-4 items-start md:border-t md:py-10">
-              <div className="flex flex-row items-end justify-between w-full gap-4">
-                <div className="flex flex-col items-start gap-4">
-                  <h1 className="text-gray-700 font-semibold text-xs text-nowrap">Add Friend Names</h1>
-                  <button
-                    onClick={handleAddFriendNameClick} // Show input field
-                    disabled={familyNames.length >= 4} // Limit control
-                    className={`px-4 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-md text-red-950 font-black 
-                      text-xs text-nowrap ${familyNames.length >= 4 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  >
-                    <FontAwesomeIcon icon={faPhone} className="mr-2" /> Add Friend Name
-                  </button>
-                </div>
-
-                {showFriendInput && (
-                  <div className="flex gap-2 items-center mt-2 w-full">
-                    <input
-                      type="text"
-                      placeholder="Enter friend name"
-                      value={friendName}
-                      onChange={handleFriendNameChange} // Handle input change
-                      className="p-3 border rounded-md text-xs w-full"
-                    />
-                    <button
-                      onClick={handleFriendNameSubmit} // Add family name to list
-                      className="px-4 py-3 bg-gray-900 text-white rounded-md text-xs"
-                    >
-                      Enter
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {errors.friendName && (
-                <p className="text-red-500 text-xs">{errors.friendName}</p> // Display error
-              )}
-
-              {friendNames.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {friendNames.map((name, index) => (
-                    <div key={index} className="bg-gray-100 p-3 rounded-md flex items-center gap-2">
-                      <FontAwesomeIcon icon={faPhone} className="text-gray-600 text-sm" />
-                      <span className="text-xs">{name}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>  */}
 
 
             
 
             {validationError && (
-                <p className="text-red-500  text-xs text-center mb-2">Please fill all fields before proceeding.</p>
+                <p className="text-red-500  text-xs text-center mb-2">Vul alle velden in voordat u verder gaat</p>
               )}
 
 
-          <button 
-              onClick={handleNextClick}
-              disabled={purchaseLoader} // Disable button while loading
-              className={`w-full h-[2.8rem] bg-gradient-to-r from-gray-900 to-black flex items-center justify-center rounded-md
-                text-white font-bold  text-xs transform transition-transform duration-300 hover:scale-[103%]`} // Style when loading
-            >
-              Next
-            </button>
+           <div className='w-full flex flex-row items-center justify-between gap-4'>
+                <button
+                onClick={onBack}
+                className="w-full h-[2.8rem] bg-gray-50 flex items-center justify-center rounded-md
+                      text-red-950 font-bold text-xs transform transition-transform duration-300 hover:scale-[103%]"
+              >
+                Terug
+              </button>
+              <button 
+                  onClick={handleNextClick}
+                  disabled={purchaseLoader} // Disable button while loading
+                  className={`w-full h-[2.8rem] bg-gradient-to-r from-gray-900 to-black flex items-center justify-center rounded-md
+                    text-white font-bold  text-xs transform transition-transform duration-300 hover:scale-[103%]`} // Style when loading
+                >
+                   Volgende
+                </button>
+           </div>
+       
           </div>
         </div>
       </div>

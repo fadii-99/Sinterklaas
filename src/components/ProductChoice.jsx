@@ -103,7 +103,7 @@ function ProductChoice({ onNext, onClose }) {
 
       }
       else{
-        setErrorMessage('Invalid coupon code');
+        setErrorMessage('Ongeldige couponcode');
       }
     } catch (error) {
       console.error('Error validating voucher:', error);
@@ -234,7 +234,7 @@ function ProductChoice({ onNext, onClose }) {
                       disabled={loading} // Disable button while loading
                       className={`px-4 py-2 bg-gray-900 text-white text-sm rounded-md ${loading ? 'opacity-50' : ''}`}
                     >
-                      {loading ? 'Processing...' : 'Enter'}
+                      {loading ? 'Verwerken...' : 'Invoeren'}
                     </button>
                 </div>
               

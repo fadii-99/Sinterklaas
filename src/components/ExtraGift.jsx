@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhone, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { BasicContext } from '../context/BasicContext';
 
-const ExtraGift = ({ onClose, onNext }) => {
+const ExtraGift = ({ onClose, onNext , onBack }) => {
   const { videoFormData , setGiftFormData } = useContext(BasicContext);
   const [selectedOption, setSelectedOption] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -37,7 +37,7 @@ const ExtraGift = ({ onClose, onNext }) => {
       setShowInput(false);
       setIsLocked(true); // Lock option after first submission
     } else {
-      setErrors({ phoneNumber: 'Please enter a valid phone number or limit reached.' });
+      setErrors({ phoneNumber: 'Voer een geldig telefoonnummer in of limiet bereikt.' });
     }
   };
 
@@ -55,7 +55,7 @@ const ExtraGift = ({ onClose, onNext }) => {
       setShowInput(false);
       setIsLocked(true); // Lock option after first submission
     } else {
-      setErrors({ email: 'Please enter a valid input' });
+      setErrors({ email: 'Voer een geldige e-mail in' });
     }
   };
 
@@ -65,11 +65,11 @@ const ExtraGift = ({ onClose, onNext }) => {
 
   const validateForm = () => {
     if (selectedOption === 'phone' && phoneNumbers.length === 0) {
-      setErrors({ phoneNumber: 'At least one phone number is required.' });
+      setErrors({ phoneNumber: 'Minstens één telefoonnummer is vereist.' });
       return false;
     }
     if (selectedOption === 'email' && emails.length === 0) {
-      setErrors({ email: 'At least one email is required.' });
+      setErrors({ email: 'Minstens één e-mail is vereist.' });
       return false;
     }
     return true;
@@ -103,7 +103,7 @@ const ExtraGift = ({ onClose, onNext }) => {
       {/* Radio Button Selection */}
       <div className="flex flex-col items-center">
         <h1 className="sm:text-lg text-md font-semibold bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 bg-clip-text text-transparent">
-          Select an Option
+        Kies een optie
         </h1>
         <div className="flex gap-8 mt-4">
           <label className="flex items-center gap-2 text-sm text-gray-600">
@@ -116,7 +116,7 @@ const ExtraGift = ({ onClose, onNext }) => {
               disabled='true'
               title='Currently not available'
             />
-            Phone Number
+            Telefoonnummer
           </label>
           <label className="flex items-center gap-2 text-sm text-gray-600">
             <input
@@ -125,8 +125,8 @@ const ExtraGift = ({ onClose, onNext }) => {
               checked={selectedOption === 'email'}
               onChange={handleOptionChange}
               disabled={isLocked && selectedOption !== 'email'}
-            />
-            Email
+             />
+            E-mail
           </label>
         </div>
       </div>
@@ -136,7 +136,7 @@ const ExtraGift = ({ onClose, onNext }) => {
         <div className="flex flex-col gap-4 items-start">
           <div className='flex sm:flex-row flex-col sm:items-end items-start sm:justify-between w-full gap-4'>
            <div className='flex flex-col items-start gap-4'>
-                <h1 className="text-gray-700 font-semibold text-xs text-nowrap">Add Phone Numbers</h1>
+                <h1 className="text-gray-700 font-semibold text-xs text-nowrap">Voeg telefoonnummers toe</h1>
                 <button
                     onClick={handleAddClick}
                     disabled={phoneNumbers.length >= limit || isLocked}
@@ -144,14 +144,14 @@ const ExtraGift = ({ onClose, onNext }) => {
                         text-xs text-nowrap
                     ${phoneNumbers.length >= limit ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                    <FontAwesomeIcon icon={faPhone} className="mr-2" /> Add Phone Number
+                    <FontAwesomeIcon icon={faPhone} className="mr-2" /> Telefoonnummer toevoegen
                 </button>
            </div>
             {showInput && (
                 <div className="flex gap-2 items-center mt-2 w-full">
                 <input
                     type="tel"
-                    placeholder="Enter phone number"
+                    placeholder="Voer telefoonnummer in"
                     value={phoneNumber}
                     onChange={handlePhoneNumberChange}
                     className="p-3 border rounded-md text-xs w-full"
@@ -160,7 +160,7 @@ const ExtraGift = ({ onClose, onNext }) => {
                     onClick={handlePhoneNumberSubmit}
                     className="sm:px-4 px-2 py-3 bg-gray-900 text-white rounded-md text-xs"
                 >
-                    Enter
+                   Invoeren
                 </button>
                 </div>
             )}
@@ -185,7 +185,7 @@ const ExtraGift = ({ onClose, onNext }) => {
         <div className="flex flex-col gap-4 items-start">
           <div className='flex sm:flex-row flex-col sm:items-end items-start sm:justify-between w-full gap-4'>
             <div className='flex flex-col items-start gap-4'>
-            <h1 className="text-gray-700 font-semibold text-xs text-nowrap">Add Emails</h1>
+            <h1 className="text-gray-700 font-semibold text-xs text-nowrap">Voeg e-mails toe</h1>
             <button
                 onClick={handleAddClick}
                 disabled={emails.length >= limit || isLocked}
@@ -193,7 +193,7 @@ const ExtraGift = ({ onClose, onNext }) => {
                     text-xs text-nowrap
                 ${emails.length >= limit ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-                <FontAwesomeIcon icon={faEnvelope} className="mr-2" /> Add Email
+                <FontAwesomeIcon icon={faEnvelope} className="mr-2" /> E-mail toevoegen
             </button>
             </div>
 
@@ -201,7 +201,7 @@ const ExtraGift = ({ onClose, onNext }) => {
             <div className="flex gap-2 items-center mt-2 w-full">
               <input
                 type="email"
-                placeholder="Enter email address"
+                placeholder="Voer e-mailadres in"
                 value={email}
                 onChange={handleEmailChange}
                 className="p-3 border rounded-md text-xs w-full"
@@ -210,7 +210,7 @@ const ExtraGift = ({ onClose, onNext }) => {
                 onClick={handleEmailSubmit}
                 className="sm:px-4 px-2 py-3 bg-gray-900 text-white rounded-md text-xs"
               >
-                Enter
+                 Invoeren
               </button>
             </div>
           )}
@@ -230,13 +230,22 @@ const ExtraGift = ({ onClose, onNext }) => {
           )}
         </div>
       )}
-      <button 
+         <div className='w-full flex flex-row items-center justify-between gap-4'>
+                <button
+                onClick={onBack}
+                className="w-full h-[2.8rem] bg-gray-50 flex items-center justify-center rounded-md
+                      text-red-950 font-bold text-xs transform transition-transform duration-300 hover:scale-[103%]"
+              >
+                Terug
+              </button>
+              <button 
               onClick={handleNextClick}
               className={`w-full h-[2.8rem] bg-gradient-to-r from-gray-900 to-black flex items-center justify-center rounded-md
                 text-white font-bold  text-xs transform transition-transform duration-300 hover:scale-[103%]`} // Style when loading
             >
-              Next
+                Volgende
             </button>
+        </div>
     </div>
   );
 };

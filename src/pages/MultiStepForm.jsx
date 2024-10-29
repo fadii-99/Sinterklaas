@@ -37,21 +37,21 @@ const MultiStepForm = ({ onClose }) => {
       case 1:
         return (
           <PersonalizationForm 
-            onClose={onClose} 
+            onBack={handleBack} 
             onNext={handleNext}
           />
         );
         case 2:
           return (
             <ExtraGift
-              onClose={onClose} 
+            onBack={handleBack} 
               onNext={handleNext}
             />
           );
           case 3:
             return (
               <Overview
-                onClose={onClose} 
+              onBack={handleBack} 
                 onNext={handleNext}
               />
             );

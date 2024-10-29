@@ -1,7 +1,7 @@
 import React, { useContext, useEffect , useState } from "react";
 import { BasicContext } from "../context/BasicContext";
 
-function Overview({ onNext }) {
+function Overview({ onBack }) {
   const { selectedVideo, videoFormData, personalizationFormData, giftFormData } = useContext(BasicContext);
   const [purchaseLoader, setPurchaseLoader] = useState(false); // Loader state
 
@@ -87,43 +87,52 @@ function Overview({ onNext }) {
         Overzicht
       </h1>
       <div className="flex flex-col gap-4 bg-gray-50 rounded-md p-6">
-        {renderListItem("Video Title", videoFormData?.videoTitle)}
-        {renderListItem("Product Kind", videoFormData?.product?.kind)}
-        {renderListItem("Product Value", `€${videoFormData?.product?.value}`)}
-        {renderListItem("Voucher Code", videoFormData?.voucherCode || "None")}
+      {renderListItem("Videotitel", videoFormData?.videoTitle)}
+        {renderListItem("Productsoort", videoFormData?.product?.kind)}
+        {renderListItem("Productwaarde", `€${videoFormData?.product?.value}`)}
+        {renderListItem("Kortingscode", videoFormData?.voucherCode || "Geen")}
         {renderListItem("Email", personalizationFormData?.email)}
-        {renderListItem("Date & Time", personalizationFormData?.dateTime)}
-        {renderListItem("Child Name", personalizationFormData?.childName)}
-        {renderListItem("Child Age", personalizationFormData?.childAge)}
-        {renderListItem("Child Hobby", personalizationFormData?.childHobby)}
-        {renderListItem("School Name", personalizationFormData?.schoolName)}
-        {renderListItem("Teacher Name", personalizationFormData?.teacherName)}
-        {renderListItem("Subject/Activity", personalizationFormData?.subjectActivity)}
-        {renderListItem("Family Names", personalizationFormData?.familyNames)}
-        {renderListItem("Friend Names", personalizationFormData?.friendNames)}
-        {renderArrayItems("Images", personalizationFormData?.images.map((file) => file.name))}
-        {renderArrayItems("Phone Numbers", giftFormData?.phoneNumbers)}
+        {renderListItem("Datum & Tijd", personalizationFormData?.dateTime)}
+        {renderListItem("Naam Kind", personalizationFormData?.childName)}
+        {renderListItem("Leeftijd Kind", personalizationFormData?.childAge)}
+        {renderListItem("Hobby Kind", personalizationFormData?.childHobby)}
+        {renderListItem("Schoolnaam", personalizationFormData?.schoolName)}
+        {renderListItem("Leraarnaam", personalizationFormData?.teacherName)}
+        {renderListItem("Vak/Activiteit", personalizationFormData?.subjectActivity)}
+        {renderListItem("Familienamen", personalizationFormData?.familyNames)}
+        {renderListItem("Vriendennamen", personalizationFormData?.friendNames)}
+        {renderArrayItems("Afbeeldingen", personalizationFormData?.images.map((file) => file.name))}
+        {renderArrayItems("Telefoonnummers", giftFormData?.phoneNumbers)}
         {renderArrayItems("Emails", giftFormData?.emails)}
       </div>
 
      
-
-       <button
-        onClick={purchaseNow}
-        className={`w-full h-[2.8rem] bg-gradient-to-r from-yellow-400 to-amber-500 flex items-center justify-center rounded-md
-          text-red-950 font-black text-xs transform transition-transform duration-300 hover:scale-[103%] 
-          ${purchaseLoader ? "opacity-50 cursor-not-allowed" : ""}`}
-        disabled={purchaseLoader}
-      >
-        {purchaseLoader ? (
-          <span className="flex items-center gap-2">
-            <span className="loader animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-red-950"></span>
-            Processing...
-          </span>
-        ) : (
-          "Proceed to pay"
-        )}
-      </button>
+      <div className='w-full flex flex-row items-center justify-between gap-4'>
+                <button
+                onClick={onBack}
+                className="w-full h-[2.8rem] bg-gray-50 flex items-center justify-center rounded-md
+                      text-red-950 font-bold text-xs transform transition-transform duration-300 hover:scale-[103%]"
+              >
+               Terug
+              </button>
+              <button
+                onClick={purchaseNow}
+                className={`w-full h-[2.8rem] bg-gradient-to-r from-yellow-400 to-amber-500 flex items-center justify-center rounded-md
+                  text-red-950 font-black text-xs transform transition-transform duration-300 hover:scale-[103%] 
+                  ${purchaseLoader ? "opacity-50 cursor-not-allowed" : ""}`}
+                disabled={purchaseLoader}
+              >
+                {purchaseLoader ? (
+                  <span className="flex items-center gap-2">
+                    <span className="loader animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-red-950"></span>
+                    Verwerken...
+                  </span>
+                ) : (
+                  "Betalen"
+                )}
+              </button>
+           </div>
+      
     </div>
   );
 }
