@@ -30,32 +30,32 @@ def add_early_access(data: EarlyAccessSchema, db=Depends(get_db)):
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Coming Soon - Sinterklaas</title>
+                <title>Binnenkort Beschikbaar - Sinterklaas</title>
                 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
             </head>
             <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
                 <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);">
                     <div style="background-color: #B22222; padding: 20px; text-align: center;">
-                        <h1 style="color: #ffffff; margin: 0;">SintMagie is Coming Soon!</h1>
+                        <h1 style="color: #ffffff; margin: 0;">SintMagie komt binnenkort!</h1>
                     </div>
                     <div style="padding: 20px; text-align: center;">
-                        <p style="color: #555555; line-height: 1.5;">Thank you for subscribing to get early access. We're excited to bring the magic of Sinterklaas to you soon!</p>
-                        <p style="color: #555555; line-height: 1.5;">As a token of our appreciation, here is your exclusive early bird coupon code:</p>
+                        <p style="color: #555555; line-height: 1.5;">Bedankt voor je inschrijving om vroegtijdige toegang te krijgen. We zijn enthousiast om binnenkort de magie van Sinterklaas naar jou te brengen!</p>
+                        <p style="color: #555555; line-height: 1.5;">Als blijk van onze waardering, hier is jouw exclusieve vroegboekingscouponcode:</p>
                         <div style="margin: 20px 0; padding: 15px; background-color: #FFD700; border-radius: 5px; display: inline-block;">
                             <p style="font-family: 'Roboto', sans-serif; font-size: 24px; color: #B22222; margin: 0; font-weight: bold;">{coupon}</p>
                         </div>
                         <div style="margin: 20px 0;">
-                            <a href="http://www.sintmagie.nl/" style="background-color: #B22222; color: #ffffff; text-decoration: none; padding: 15px 30px; border-radius: 5px; font-size: 16px;">Visit Our Website</a>
+                            <a href="http://www.sintmagie.nl/" style="background-color: #B22222; color: #ffffff; text-decoration: none; padding: 15px 30px; border-radius: 5px; font-size: 16px;">Bezoek onze website</a>
                         </div>
                     </div>
                     <div style="background-color: #B22222; padding: 10px; text-align: center; color: #ffffff;">
-                        <p style="margin: 0;">Follow us on:</p>
+                        <p style="margin: 0;">Volg ons op:</p>
                         <p style="margin: 5px 0;">
                             <a href="https://facebook.com" style="color: #ffffff; margin: 0 5px;">Facebook</a> | 
                             <a href="https://twitter.com" style="color: #ffffff; margin: 0 5px;">Twitter</a> | 
                             <a href="https://instagram.com" style="color: #ffffff; margin: 0 5px;">Instagram</a>
                         </p>
-                        <p style="margin: 0; font-size: 12px;">You received this email because you subscribed to our early access list.</p>
+                        <p style="margin: 0; font-size: 12px;">Je ontvangt deze e-mail omdat je je hebt ingeschreven voor onze vroege toegang lijst.</p>
                     </div>
                 </div>
             </body>

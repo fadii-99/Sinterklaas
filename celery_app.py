@@ -54,9 +54,9 @@ def process_pending_videos():
 
         print("\nGenerating Voice\n")
 
-        generated_audio = generate_voice(pending_purchase, purchase_email, purchase_date, name, age, hobby,purchase_id,connection)
+        # generated_audio = generate_voice(pending_purchase, purchase_email, purchase_date, name, age, hobby,purchase_id,connection)
         # print(generated_audio)
-        # generated_audio = 'static/generated_audios/s@s.com_2024-10-27 11:26:53.mp3'
+        generated_audio = 'static/generated_audios/s@s.com_2024-10-27 11:26:53.mp3'
         if generated_audio == None:
             print("Failed to generate audio.")
             return False

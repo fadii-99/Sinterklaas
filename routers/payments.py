@@ -15,7 +15,7 @@ router = APIRouter()
 mollie_client = Client()
 mollie_client.set_api_key(os.environ.get('mollie_api'))
 
-def create_payment(amount: str, videoName: str, user_email: str, db):
+def create_payment(amount: str, videoName: str, user_email: str, purchase_id, db):
     try:
         # Convert amount to float to ensure correct formatting
         amount_value = float(amount)
@@ -37,9 +37,19 @@ def create_payment(amount: str, videoName: str, user_email: str, db):
         })
         with db.cursor() as cursor:
             cursor.execute("""
-                INSERT INTO payments (payment_id, video_name, amount, currency, status, user_email)
-                VALUES (%s, %s, %s, %s, %s, %s)
-            """, (payment['id'], videoName, amount_value, 'EUR', 'pending', user_email))
+                SELECT * FROM video_purchases WHERE id = %s
+            """, (purchase_id,))
+            purchases_data = cursor.fetchone()
+
+
+            print(purchase_id)
+
+
+            cursor.execute("""
+                INSERT INTO payments (payment_id, video_name, amount, currency, status, user_email, video_purchase_id)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """, (payment['id'], videoName, amount_value, 'EUR', 'pending', user_email, purchase_id))
+
 
             # Commit the transaction
             db.commit()
@@ -64,7 +74,6 @@ async def payment_success():
 @router.post("/webhook")
 async def webhook(request: Request, db=Depends(get_db)):
     try:
-        # Parse form data to get the payment ID
         form_data = await request.form()
         payment_id = form_data.get('id')
 
@@ -73,7 +82,6 @@ async def webhook(request: Request, db=Depends(get_db)):
         if not payment_id:
             raise HTTPException(status_code=400, detail="Payment ID is missing.")
 
-        # Fetch payment details from Mollie
         payment = mollie_client.payments.get(payment_id)
         status = payment.get('status')
         metadata = payment.get('metadata', {})
@@ -88,10 +96,8 @@ async def webhook(request: Request, db=Depends(get_db)):
             amount_value = amount.get('value')
             currency = amount.get('currency')
 
-            # Use a cursor to execute SQL queries
             cursor = db.cursor()
 
-            # Update the payment status in the video_purchases table
             cursor.execute("""
                 UPDATE payments
                 SET status = %s
@@ -99,45 +105,56 @@ async def webhook(request: Request, db=Depends(get_db)):
             """, ('completed', payment_id))
 
             cursor.execute("""
-                SELECT user_email FROM payments WHERE payment_id = %s
+                SELECT * FROM payments WHERE payment_id = %s
             """, (payment_id,))
-            email_result = cursor.fetchone()
 
+            payment_info = cursor.fetchone()
+            if not payment_info:
+                raise ValueError("No payment found for the given payment ID.")
 
-            # Update the payment status in the video_purchases table
+            video_purchase_id = payment_info[10]  # Assuming this holds the video_purchase_id
+            cursor.execute("""
+                SELECT * FROM video_purchases WHERE id = %s
+            """, (video_purchase_id,))
+            purchases_data = cursor.fetchone()
+            if not purchases_data:
+                raise ValueError("No purchase data found for the given video purchase ID.")
+
             cursor.execute("""
                 UPDATE video_purchases
                 SET payment_status = %s
-                WHERE video_name = %s
-            """, ('completed', video_name))
+                WHERE id = %s
+            """, ('completed', video_purchase_id))
 
+            # cursor.execute("""
+            #     INSERT INTO payments (payment_id, video_name, amount, currency, status)
+            #     VALUES (%s, %s, %s, %s, 'completed')
+            # """, (payment_id, video_name, amount_value, currency))
 
-            # Insert payment details into the payments table
-            cursor.execute("""
-                INSERT INTO payments (payment_id, video_name, amount, currency, status)
-                VALUES (%s, %s, %s, %s, 'completed')
-            """, (payment_id, video_name, amount_value, currency))
+            # result = cursor.fetchone()
+            # created_at = result['created_at'] if result else None
 
-            # Commit the transaction and close the cursor
             db.commit()
             cursor.close()
 
-            # process_pending_videos.delay()
             try:
                 process_pending_videos.delay()
             except Exception as task_error:
                 print(f"Error while processing pending videos: {task_error}")
 
-            print('sending reciept')
-
-            send_receipt_email(email_result[0], payment_id, video_name, amount_value, currency)
-            print('sent reciept')
+            print('Sending receipt...')
+            receiver = purchases_data[2] if purchases_data[2] else purchases_data[17]
+            send_receipt_email(
+                payment_info[6], payment_id, video_name, amount_value, currency, receiver, purchases_data[3]
+            )
+            print('Receipt sent')
 
         return {"status": "received"}
 
     except Exception as e:
         print(f"Error in webhook: {str(e)}")
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
 # process_pending_videos.delay()
 
 

@@ -81,38 +81,29 @@ async def purchase_video(
             receiver_email 
         ))
 
-        # Retrieve the last inserted purchase ID and its creation date
         purchase_id = cursor.lastrowid
+
         cursor.execute("SELECT created_at FROM video_purchases WHERE id = %s", (purchase_id,))
         created_at = cursor.fetchone()['created_at']
 
-        # Format the creation date for folder naming
         folder_date = created_at.strftime('%Y-%m-%d')
         print(f"Folder date: {folder_date}")
 
-        # Save image and video files to appropriate folders
         image_files = [file for file in files if file.content_type.startswith('image/')]
-        # video_files = [file for file in files if file.content_type.startswith('video/')]
 
         image_paths = save_files(user_email, folder_date, image_files, "images")
-        # video_paths = save_files(user_email, folder_date, video_files, "videos")
 
-        # Insert file paths into the video_files table
         insert_file_path_query = """
         INSERT INTO video_files (purchase_id, file_type, file_path)
         VALUES (%s, %s, %s)
         """
         for path in image_paths:
             cursor.execute(insert_file_path_query, (purchase_id, "image", path))
-        # for path in video_paths:
-        #     cursor.execute(insert_file_path_query, (purchase_id, "video", path))
 
-        # Commit the transaction and close the cursor
         db.commit()
         cursor.close()
 
-        # Create the payment and return the result
-        ret = create_payment(amount, video_name, user_email, db)
+        ret = create_payment(amount, video_name, user_email,purchase_id, db)
         print(f"Payment response: {ret}")
 
         return ret

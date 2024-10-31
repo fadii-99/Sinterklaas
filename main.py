@@ -8,6 +8,7 @@ from database import get_db_connection
 import requests
 import os
 from dotenv import load_dotenv
+from datetime import datetime, timedelta
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -173,72 +174,111 @@ def send_on_whatsapp(phone, video):
         return False
 
 
+
+
 def load_pending_video():
-    connection = get_db_connection() 
-    cursor = connection.cursor(dictionary=True) 
+    # Establish database connection
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    # Query to fetch the pending video
     query = """
-        SELECT id, purchase_id, final_video_path, send_status
-        FROM final_videos 
-        WHERE send_status = 'pending' 
-        ORDER BY id ASC 
+        SELECT fv.id, fv.purchase_id, fv.final_video_path, fv.send_status, vp.send_date
+        FROM final_videos fv
+        JOIN video_purchases vp ON fv.purchase_id = vp.id
+        WHERE fv.send_status = 'pending'
+        ORDER BY fv.id ASC 
         LIMIT 1;
     """
+
+    # Execute the query and fetch the first pending video
     cursor.execute(query)
     pending_video = cursor.fetchone()
 
     if pending_video:
-        print(f"Processing video: {pending_video['final_video_path']}")
+        send_date = pending_video['send_date']
+        current_time = datetime.now()
 
-        purchase_query = """
-            SELECT receiver_phone, receiver_email  
-            FROM video_purchases 
-            WHERE id = %s;
-        """
-        cursor.execute(purchase_query, (pending_video['purchase_id'],))
-        purchase = cursor.fetchone()
-        
-        if purchase:
-            phone_numbers = purchase['receiver_phone'].split(',') if purchase['receiver_phone'] and purchase['receiver_phone'] != 'null' else []
-            email_addresses = purchase['receiver_email'].split(',') if purchase['receiver_email'] and purchase['receiver_email'] != 'null' else []
+        # Define the time range for the send hour slot
+        start_of_hour = send_date.replace(minute=0, second=0, microsecond=0)
+        end_of_hour = start_of_hour + timedelta(hours=1)
 
-            if email_addresses:
+        # Check if the current time falls within the send hour slot
+        if start_of_hour <= current_time < end_of_hour:
+            print(f"Processing video: {pending_video['final_video_path']}")
+
+            # Fetch receiver's contact details
+            purchase_query = """
+                SELECT receiver_phone, receiver_email  
+                FROM video_purchases 
+                WHERE id = %s;
+            """
+            cursor.execute(purchase_query, (pending_video['purchase_id'],))
+            purchase = cursor.fetchone()
+
+            if purchase:
+                # Clean and split phone numbers and email addresses
+                phone_numbers = (
+                    purchase['receiver_phone'].split(',')
+                    if purchase['receiver_phone'] and purchase['receiver_phone'] != 'null'
+                    else []
+                )
+                email_addresses = (
+                    eval(purchase['receiver_email'])  # Convert stringified list to actual list
+                    if purchase['receiver_email'] and purchase['receiver_email'] != 'null'
+                    else []
+                )
+
+                # Send video via email to multiple recipients
+                email_sent = False
                 for email in email_addresses:
                     if send_on_email(email.strip(), pending_video['final_video_path']):
-                        update_query = """
-                            UPDATE final_videos 
-                            SET send_status = 'sent' 
-                            WHERE id = %s;
-                        """
-                        cursor.execute(update_query, (pending_video['id'],))
-                        connection.commit()
-                        print(f"Video ID {pending_video['id']} marked as sent via email to {email.strip()}.")
-                        break  
-            
-            # if phone_numbers:
-            #     for phone in phone_numbers:
-            #         if send_on_whatsapp(phone, os.path.basename(pending_video['final_video_path'])):
-            #             update_query = """
-            #                 UPDATE final_videos 
-            #                 SET send_status = 'sent' 
-            #                 WHERE id = %s;
-            #             """
-            #             cursor.execute(update_query, (pending_video['id'],))
-            #             connection.commit()
-            #             print(f"Video ID {pending_video['id']} marked as sent via phone to {phone.strip()}.")
-            #             break  
+                        email_sent = True
+                        print(f"Video ID {pending_video['id']} sent via email to {email.strip()}.")
+
+                # Mark the video as sent if email was successfully delivered to any recipient
+                if email_sent:
+                    mark_as_sent(cursor, connection, pending_video['id'])
+
+                # Optional: Send video via WhatsApp (commented)
+                # for phone in phone_numbers:
+                #     if send_on_whatsapp(phone.strip(), os.path.basename(pending_video['final_video_path'])):
+                #         mark_as_sent(cursor, connection, pending_video['id'])
+                #         print(f"Video ID {pending_video['id']} sent via phone to {phone.strip()}.")
+                #         break  # Stop after the first successful WhatsApp send
+
+            else:
+                print("No purchase information found for the pending video.")
         else:
-            print("No purchase information found for the pending video.")
+            print("Current time does not match the send date hour. Skipping this video.")
     else:
         print("No pending videos to process.")
 
+    # Close the database connection
+    cursor.close()
+    connection.close()
 
 
 
 
-def dummy():
-    process_pending_videos.delay()
-# scheduler.add_job(load_pending_video, 'interval', seconds=5)
-scheduler.add_job(dummy, 'interval', seconds=1800)
+def mark_as_sent(cursor, connection, video_id):
+    """Mark the video as sent in the database."""
+    update_query = """
+        UPDATE final_videos 
+        SET send_status = 'sent' 
+        WHERE id = %s;
+    """
+    cursor.execute(update_query, (video_id,))
+    connection.commit()
+
+
+
+
+
+# def dummy():
+    # process_pending_videos.delay()
+scheduler.add_job(load_pending_video, 'interval', seconds=180)
+# scheduler.add_job(dummy, 'interval', seconds=10)
 
 # scheduler.start()
 
