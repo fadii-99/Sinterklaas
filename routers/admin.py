@@ -2,10 +2,96 @@ from fastapi import FastAPI, Depends, HTTPException, APIRouter, Form
 from schemas import EarlyAccessSchema  
 from database import get_db
 from utils import send_email
-
+import jwt
+from datetime import datetime, timedelta
 
 router = APIRouter()
 
+
+def generate_jwt_token(user):
+    expiration_time = datetime.utcnow() + timedelta(hours=10)
+
+    payload = {
+        'user_id': user.id,
+        'username': user.username,
+        'email': user.email,
+        'exp': expiration_time.timestamp(),
+    }
+    token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+
+    return token
+
+
+def decode_jwt_token(token):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token has expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+
+
+@router.get("/create-admin")
+async def create_or_update_admin(db=Depends(get_db)):
+    cursor = db.cursor()
+    try:
+        username = 'admin'
+        email = 'admin@admin.com'
+        password = 'admin1234'
+        hashed_password = password
+        # hashed_password = hash_password(password)
+
+        cursor.execute("SELECT * FROM users WHERE username = %s OR email = %s", (username, email))
+        existing_user = cursor.fetchone()
+        print(existing_user['id'])
+
+        if existing_user:
+            cursor.execute(
+                "UPDATE users SET password = %s WHERE id = %s",
+                (hashed_password, existing_user['id'])  
+            )
+            db.commit()
+            return JSONResponse(status_code=200, content={"message": "User updated successfully."})
+        else:
+            cursor.execute(
+                "INSERT INTO users (username, email, password) VALUES (%s, %s, %s)",
+                (username, email, hashed_password)
+            )
+            db.commit()
+            return JSONResponse(status_code=201, content={"message": "User created successfully."})
+    except IntegrityError as e:
+        db.rollback()  
+        raise HTTPException(status_code=400, detail="Username or email already exists.")
+    except Exception as e:
+        print(f"Error creating or updating user: {e}")
+        db.rollback()
+        raise HTTPException(status_code=500, detail="An error occurred while creating or updating the user.")
+    finally:
+        cursor.close()
+
+
+
+@router.post("/admin/login")
+async def login(email: str = Form(...), password: str = Form(...), db=Depends(get_db)):
+    cursor = db.cursor()
+    try:
+        cursor.execute("SELECT * FROM users WHERE email = %s AND password = %s", (email,))
+        user = cursor.fetchone()
+        if not user:
+             return JSONResponse(scontent={"error": 'Invalid Credentials'},status_code=400)
+
+        if password == user['password']:
+            access_token = generate_jwt_token(user)
+            return JSONResponse(content={"access_token": access_token})
+    
+    except Exception as e:
+        print(f"Error during login: {e}")
+        raise HTTPException(status_code=500, detail="An error occurred during login.")
+    
+    finally:
+        cursor.close()
 
 
 @router.get("/admin/video-purchases/")
