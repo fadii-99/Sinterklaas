@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from cachetools import LRUCache
-from routers import early_access, purchases, welcome_messages, payments
+from routers import early_access, purchases, welcome_messages, payments, admin
 from apscheduler.schedulers.background import BackgroundScheduler
 # from utils import send_whatsapp_video,send_email_with_video
 from database import get_db_connection 
@@ -34,6 +34,7 @@ app.include_router(early_access.router)
 app.include_router(payments.router)
 app.include_router(purchases.router)
 app.include_router(welcome_messages.router)
+app.include_router(admin.router)
 
 ACCESS_TOKEN = "EAALyPvU2Hp4BO7CilpmeLHCVBUSbMKAAzCpkKh4kM8R5GkHFLDJR7E2r8dZCn9PSwW5B8iRfESEh0jNqtvFreZBI8d2WYTTfaNEsD8gSR8wbZBWIZCrEbesnVZAu1j6i6iHhbk0CWbaFx2kVt122tlWvJtFfeZB7lDR7GCNJMMqosP2ZBXIWt0uMKKuZBEHrzgbhu8QW0S6M6RxJW0rnx3XZAWeb4OEgZD"
 WHATSAPP_API_URL = "https://graph.facebook.com/v20.0/431326530069965"
@@ -90,8 +91,8 @@ def send_on_email(email, video):
     html_body = """
     <html>
     <body>
-        <p>Hi there!</p>
-        <p>Enjoy your gifted video!</p>
+        <p>Hallo!</p> 
+        <p>Geniet van je cadeauvideo!</p>
     </body>
     </html>
     """
