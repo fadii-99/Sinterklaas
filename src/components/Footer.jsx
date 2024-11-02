@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link , useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebookF, faInstagram, faXTwitter } from '@fortawesome/free-brands-svg-icons';
 import whiteLogo from './../assets/sinterklaasWhiteLogo.png';
@@ -7,12 +7,13 @@ import applePay from './../assets/applePay.png';
 import banContact from './../assets/banContact.png';
 import masterCard from './../assets/masterCard.png';
 import ideal from './../assets/ideal.png';
-import paypal from './../assets/payPal.png';
+import paypal from './../assets/paypal.png';
 import { BasicContext } from '../context/BasicContext';
 
 
 
 function Footer() {
+  const navigate=useNavigate();
   const { setComingSoonModel } = useContext(BasicContext); // Use context to trigger modal
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -35,7 +36,7 @@ function Footer() {
         <div className="flex flex-col items-start gap-6 pt-6">
           <h3 className="text-lg text-white font-black">Producten</h3>
           <div className="flex flex-col items-start gap-2">
-            <button onClick={handleComingSoon} 
+            <button onClick={() => navigate('/Videos')}
             className="hover:text-gray-200 text-xs text-white font-light transition-transform duration-300 hover:scale-[102%]">
               Video van Sinterklaas
             </button>

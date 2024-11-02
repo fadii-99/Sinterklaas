@@ -10,6 +10,11 @@ const Success=lazy(() => import('../pages/Success.jsx'));
 const PrivacyPolicy=lazy(() => import('../pages/PrivacyPolicy.jsx'));
 const TermsOfService=lazy(() => import('../pages/TermOfService.jsx'));
 const Pricing=lazy(() => import('../pages/Pricing.jsx'));
+const Video=lazy(() => import('../pages/Video.jsx'));
+const Login=lazy(() => import('../pages/Login.jsx'));
+const Admin=lazy(() => import('../pages/Admin.jsx'));
+
+
 
 const router = createBrowserRouter([
   {
@@ -26,7 +31,15 @@ const router = createBrowserRouter([
       }
       ,
       {
+        path: '/Login', element: ( <Suspense fallback={''}> <Login /> </Suspense>),
+      }
+      ,
+      {
         path: '/Pricing', element: ( <Suspense fallback={''}> <Pricing /> </Suspense>),
+      }
+      ,
+      {
+        path: '/Videos', element: ( <Suspense fallback={''}> <Video /> </Suspense>),
       }
       ,
       {
@@ -45,6 +58,11 @@ const router = createBrowserRouter([
   {
     path: '/ComingSoon', element: ( <Suspense fallback={''}> <ComingSoon /> </Suspense>),
   }
+  ,
+  
+      {
+        path: '/Admin', element: ( <Suspense fallback={''}> <Admin/> </Suspense>),
+      }
 ]);
 
 export default router;

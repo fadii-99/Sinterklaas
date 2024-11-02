@@ -41,7 +41,7 @@ function HeroSection(props){
                 <img src={avatar} alt="" className='2xl:w-[26rem] xl:w-[20rem] lg:w-[16rem] h-auto lg:block hidden' />
             </div>}
            
-            <div className="max-w-4xl w-full flex flex-col items-center gap-5 sm:px-4 px-8">
+            <div className={`${props.videoWidth ? 'max-w-5xl': 'max-w-4xl' }  w-full flex flex-col items-center gap-5 sm:px-4 px-8`}>
                 <label 
                 className='md:text-lg sm:text-sm text-xs font-black italic bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 
                 bg-clip-text text-transparent text-center'>

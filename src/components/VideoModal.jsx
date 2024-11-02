@@ -8,7 +8,7 @@ import { FaCreditCard, FaPaypal, FaCcVisa, FaCcMastercard } from 'react-icons/fa
 import banContact from './../assets/banContact.png';
 import masterCard from './../assets/masterCard.png';
 import ideal from './../assets/ideal.png';
-import paypal from './../assets/payPal.png';
+import paypal from './../assets/paypal.png';
 import applePay from './../assets/applePay.png';
 import applePayBlack from './../assets/applePayBlack.png';
 

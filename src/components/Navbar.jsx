@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation , useNavigate } from 'react-router-dom';
 import logo from './../assets/sinterklaasLogo.png';
 import { FaShoppingCart, FaBars } from 'react-icons/fa';
 import { BasicContext } from '../context/BasicContext';
 
+
 function Navbar() {
   const { setComingSoonModel } = useContext(BasicContext);
-  const location = useLocation(); // Detect the current route
+  const location = useLocation(); 
+  const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -15,21 +17,22 @@ function Navbar() {
     setIsOpen(false);
   };
 
-  // Set `isScrolled` based on route or scroll position
+  // Update `isScrolled` based on route or scroll position
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 100); // Trigger scroll effect after 100px
     };
 
-    const isWhitePage = ['/TermOfServices', '/PrivacyPolicy'].includes(location.pathname);
-    if (isWhitePage) {
-      setIsScrolled(true);
-    } else {
+    // Check if the current route requires a white background navbar
+    const isWhitePage = ['/TermOfServices', '/PrivacyPolicy', '/Login', '/Admin'].includes(location.pathname);
+    setIsScrolled(isWhitePage || window.scrollY > 100); // Set the initial `isScrolled` state based on route or scroll position
+
+    if (!isWhitePage) {
       window.addEventListener('scroll', handleScroll);
     }
 
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [location]);
+  }, [location]); // Re-run when `location` changes
 
   return (
     <div
@@ -56,7 +59,7 @@ function Navbar() {
         <Link to='/' className="text-white sm:text-sm text-xs font-bold hover:scale-105 transition-transform duration-300 my-1" onClick={handleMenuClick}>
           Startpagina
         </Link>
-        <button onClick={() => { setComingSoonModel(true); handleMenuClick(); }} className="text-white sm:text-sm text-xs font-bold hover:scale-105 transition-transform duration-300 my-1">
+        <button onClick={() => navigate('/Videos')} className="text-white sm:text-sm text-xs font-bold hover:scale-105 transition-transform duration-300 my-1">
           Video van Sinterklaas
         </button>
         <button onClick={() => { setComingSoonModel(true); handleMenuClick(); }} className="text-white sm:text-sm text-xs font-bold hover:scale-105 transition-transform duration-300 my-1">
@@ -65,10 +68,13 @@ function Navbar() {
         <Link to='/Pricing' className="text-white sm:text-sm text-xs font-bold hover:scale-105 transition-transform duration-300 my-1" onClick={handleMenuClick}>
           Prijzen
         </Link>
-        <button onClick={() => { setComingSoonModel(true); handleMenuClick(); }} className="py-2 px-4 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-md text-white font-black text-sm hover:scale-[103%] transition-transform my-1">
+        <button onClick={() => navigate('/Videos')} className="py-2 px-4 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-md text-white font-black text-sm hover:scale-[103%] transition-transform my-1">
           JOUW VIDEO
         </button>
-        <FaShoppingCart onClick={() => { setComingSoonModel(true); handleMenuClick(); }} className="text-white text-xl hover:scale-105 transition-transform" />
+        {/* <Link to='/Login' className="text-white sm:text-sm text-xs font-bold hover:scale-105  bg-gray-50 bg-opacity-20 hover:bg-gray-50 hover:bg-opacity-35  py-2 px-6 rounded
+        transition-transform duration-300 my-1" onClick={handleMenuClick}>
+         Inloggen
+        </Link> */}
       </div>
 
       {/* Desktop Menu */}
@@ -76,7 +82,7 @@ function Navbar() {
         <Link to='/' className={`${isScrolled ? 'text-red-700' : 'text-white'} sm:text-sm text-xs font-semibold hover:scale-105 transition-transform`} onClick={handleMenuClick}>
           Startpagina
         </Link>
-        <button onClick={() => setComingSoonModel(true)} className={`${isScrolled ? 'text-red-700' : 'text-white'} sm:text-sm text-xs font-semibold hover:scale-105 transition-transform`}>
+        <button onClick={() => navigate('/Videos')} className={`${isScrolled ? 'text-red-700' : 'text-white'} sm:text-sm text-xs font-semibold hover:scale-105 transition-transform`}>
           Video van Sinterklaas
         </button>
         <button onClick={() => setComingSoonModel(true)} className={`${isScrolled ? 'text-red-700' : 'text-white'} sm:text-sm text-xs font-semibold hover:scale-105 transition-transform`}>
@@ -85,10 +91,14 @@ function Navbar() {
         <Link to='/Pricing' className={`${isScrolled ? 'text-red-700' : 'text-white'} sm:text-sm text-xs font-semibold hover:scale-105 transition-transform`} onClick={handleMenuClick}>
           Prijzen
         </Link>
-        <button onClick={() => setComingSoonModel(true)} className="py-2 px-4 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-md text-red-950 font-black text-sm hover:scale-[103%] transition-transform">
+        <button onClick={() => navigate('/Videos')} className="py-2 px-4 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-md text-red-950 font-black text-sm hover:scale-[103%] transition-transform">
           JOUW VIDEO
         </button>
-        <FaShoppingCart onClick={() => setComingSoonModel(true)} className={`${isScrolled ? 'text-red-700' : 'text-white'} text-xl hover:scale-105 transition-transform`} />
+        {/* <Link to='/Login' className={`${isScrolled ? 'text-red-700' : 'text-white'} 
+        sm:text-sm text-xs font-bold hover:scale-105 transition-transform bg-gray-50 bg-opacity-20 hover:bg-gray-50 hover:bg-opacity-35 py-2 px-6 rounded`} 
+        onClick={handleMenuClick}>
+         Inloggen
+        </Link> */}
       </div>
     </div>
   );
