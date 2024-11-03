@@ -40,21 +40,21 @@ function Footer() {
             className="hover:text-gray-200 text-xs text-white font-light transition-transform duration-300 hover:scale-[102%]">
               Video van Sinterklaas
             </button>
-            <button onClick={handleComingSoon} 
+            {/* <button onClick={handleComingSoon} 
             className="hover:text-gray-200 text-xs text-white font-light transition-transform duration-300 hover:scale-[102%]">
               Brief van Sinterklaas
-            </button>
-            <button onClick={handleComingSoon} 
+            </button> */}
+            {/* <button onClick={handleComingSoon} 
             className="hover:text-gray-200 text-xs text-white font-light transition-transform duration-300 hover:scale-[102%]">
               Gratis downloaden
-            </button>
+            </button> */}
             <Link to="/Pricing" className="hover:text-gray-200 text-xs text-white font-light transition-transform duration-300 hover:scale-[102%]">
               Prijzen
             </Link>
-            <button onClick={handleComingSoon} 
+            <Link to='/Discount'
             className="hover:text-gray-200 text-xs text-white font-light transition-transform duration-300 hover:scale-[102%]">
               Kortingscodes en vouchers
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -62,18 +62,18 @@ function Footer() {
         <div className="flex flex-col items-start gap-6 pt-6">
           <h3 className="text-lg text-white font-black">Bedrijfsgegevens</h3>
           <div className="flex flex-col items-start gap-2">
-            <button onClick={handleComingSoon} 
+            <Link to='/About'
             className="hover:text-gray-200 text-xs text-white font-light transition-transform duration-300 hover:scale-[102%]">
               Over ons
-            </button>
-            <button onClick={handleComingSoon} 
+            </Link>
+            <Link to="/Affiliate" 
             className="hover:text-gray-200 text-xs text-white font-light transition-transform duration-300 hover:scale-[102%]">
               Affiliate programma
-            </button>
-            <button onClick={handleComingSoon} 
+            </Link>
+            {/* <button onClick={handleComingSoon} 
             className="hover:text-gray-200 text-xs text-white font-light transition-transform duration-300 hover:scale-[102%]">
               Word ambassadeur van SintMagie
-            </button>
+            </button> */}
             <Link to="/TermOfServices" className="hover:text-gray-200 text-xs text-white font-light transition-transform duration-300 hover:scale-[102%]">
               Algemene voorwaarden
             </Link>
@@ -81,17 +81,18 @@ function Footer() {
             className="hover:text-gray-200 text-xs text-white font-light transition-transform duration-300 hover:scale-[102%]">
               Privacy- en cookieverklaring
             </Link>
-            <button onClick={handleComingSoon} 
+            <Link to="/Disclaimer"  
             className="hover:text-gray-200 text-xs text-white font-light transition-transform duration-300 hover:scale-[102%]">
               Disclaimer
-            </button>
+            </Link>
           </div>
         </div>
 
         {/* Newsletter Signup and Payment Methods */}
         <div className="flex flex-col items-start gap-6 pt-6">
           <h3 className="text-lg text-white font-bold">Aanmelden voor Pietenkorting</h3>
-          <form className="flex flex-row items-center w-full">
+          <form onSubmit={(e) => e.preventDefault()}
+          className="flex flex-row items-center w-full">
             <input
               className="shadow-md border-2 px-2 py-3 w-full text-xs focus:outline-none placeholder:text-gray-600"
               type="email"

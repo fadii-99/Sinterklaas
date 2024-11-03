@@ -13,7 +13,11 @@ const Pricing=lazy(() => import('../pages/Pricing.jsx'));
 const Video=lazy(() => import('../pages/Video.jsx'));
 const Login=lazy(() => import('../pages/Login.jsx'));
 const Admin=lazy(() => import('../pages/Admin.jsx'));
-
+const Discount=lazy(() => import('../pages/Discount.jsx'));
+const About=lazy(() => import('../pages/About.jsx'));
+const Affiliate=lazy(() => import('../pages/Affiliate.jsx'));
+const Disclaimer=lazy(() => import('../pages/Disclaimer.jsx'));
+const PlayVideo=lazy(() => import('../pages/PlayVideo.jsx'));
 
 
 const router = createBrowserRouter([
@@ -43,11 +47,31 @@ const router = createBrowserRouter([
       }
       ,
       {
+        path: '/Discount', element: ( <Suspense fallback={''}> <Discount /> </Suspense>),
+      }
+      ,
+      {
+        path: '/About', element: ( <Suspense fallback={''}> <About /> </Suspense>),
+      }
+      ,
+      {
+        path: '/Affiliate', element: ( <Suspense fallback={''}> <Affiliate/> </Suspense>),
+      }
+      ,
+      {
+        path: '/Disclaimer', element: ( <Suspense fallback={''}> <Disclaimer/> </Suspense>),
+      }
+      ,
+      {
         path: '/TermOfServices', element: ( <Suspense fallback={''}> <TermsOfService /> </Suspense>),
       }
       ,
       {
         path: '/PrivacyPolicy', element: ( <Suspense fallback={''}> <PrivacyPolicy /> </Suspense>),
+      }
+      ,
+      {
+        path: '/PlayVideo', element: ( <Suspense fallback={''}> <PlayVideo /> </Suspense>),
       }
       ,
   {

@@ -55,9 +55,10 @@ function Overview({ onBack }) {
         formData.append('friends_names', personalizationFormData.familyNames);
         formData.append('family_names', personalizationFormData.friendNames);
         personalizationFormData.images.forEach((image) => formData.append('files', image));
-        formData.append('receiver_phone', JSON.stringify(giftFormData.emails));
-        formData.append('receiver_email', JSON.stringify(giftFormData.phoneNumbers));
+        formData.append('receiver_phone', JSON.stringify(giftFormData.phoneNumbers));
+        formData.append('receiver_email', JSON.stringify(giftFormData.emails));
 
+        
             try {
             const response = await fetch('http://134.122.63.191:9000/purchase-video', {
                 method: 'POST',

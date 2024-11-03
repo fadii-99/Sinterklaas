@@ -24,7 +24,7 @@ function Navbar() {
     };
 
     // Check if the current route requires a white background navbar
-    const isWhitePage = ['/TermOfServices', '/PrivacyPolicy', '/Login', '/Admin'].includes(location.pathname);
+    const isWhitePage = ['/TermOfServices', '/PrivacyPolicy', '/Login', '/Admin' , '/Disclaimer', '/PlayVideo'].includes(location.pathname);
     setIsScrolled(isWhitePage || window.scrollY > 100); // Set the initial `isScrolled` state based on route or scroll position
 
     if (!isWhitePage) {
@@ -62,15 +62,18 @@ function Navbar() {
         <button onClick={() => navigate('/Videos')} className="text-white sm:text-sm text-xs font-bold hover:scale-105 transition-transform duration-300 my-1">
           Video van Sinterklaas
         </button>
-        <button onClick={() => { setComingSoonModel(true); handleMenuClick(); }} className="text-white sm:text-sm text-xs font-bold hover:scale-105 transition-transform duration-300 my-1">
+        {/* <button onClick={() => { setComingSoonModel(true); handleMenuClick(); }} className="text-white sm:text-sm text-xs font-bold hover:scale-105 transition-transform duration-300 my-1">
           Brief van Sinterklaas
-        </button>
+        </button> */}
         <Link to='/Pricing' className="text-white sm:text-sm text-xs font-bold hover:scale-105 transition-transform duration-300 my-1" onClick={handleMenuClick}>
           Prijzen
         </Link>
-        <button onClick={() => navigate('/Videos')} className="py-2 px-4 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-md text-white font-black text-sm hover:scale-[103%] transition-transform my-1">
+        <Link to='/About' className="text-white sm:text-sm text-xs font-bold hover:scale-105 transition-transform duration-300 my-1" onClick={handleMenuClick}>
+         Over ons
+        </Link>
+        {/* <button onClick={() => navigate('/Videos')} className="py-2 px-4 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-md text-white font-black text-sm hover:scale-[103%] transition-transform my-1">
           JOUW VIDEO
-        </button>
+        </button> */}
         {/* <Link to='/Login' className="text-white sm:text-sm text-xs font-bold hover:scale-105  bg-gray-50 bg-opacity-20 hover:bg-gray-50 hover:bg-opacity-35  py-2 px-6 rounded
         transition-transform duration-300 my-1" onClick={handleMenuClick}>
          Inloggen
@@ -85,15 +88,18 @@ function Navbar() {
         <button onClick={() => navigate('/Videos')} className={`${isScrolled ? 'text-red-700' : 'text-white'} sm:text-sm text-xs font-semibold hover:scale-105 transition-transform`}>
           Video van Sinterklaas
         </button>
-        <button onClick={() => setComingSoonModel(true)} className={`${isScrolled ? 'text-red-700' : 'text-white'} sm:text-sm text-xs font-semibold hover:scale-105 transition-transform`}>
+        {/* <button onClick={() => setComingSoonModel(true)} className={`${isScrolled ? 'text-red-700' : 'text-white'} sm:text-sm text-xs font-semibold hover:scale-105 transition-transform`}>
           Brief van Sinterklaas
-        </button>
+        </button> */}
         <Link to='/Pricing' className={`${isScrolled ? 'text-red-700' : 'text-white'} sm:text-sm text-xs font-semibold hover:scale-105 transition-transform`} onClick={handleMenuClick}>
           Prijzen
         </Link>
-        <button onClick={() => navigate('/Videos')} className="py-2 px-4 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-md text-red-950 font-black text-sm hover:scale-[103%] transition-transform">
+        <Link to='/About' className={`${isScrolled ? 'text-red-700' : 'text-white'} sm:text-sm text-xs font-semibold hover:scale-105 transition-transform`} onClick={handleMenuClick}>
+          Over ons
+        </Link>
+        {/* <button onClick={() => navigate('/Videos')} className="py-2 px-4 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-md text-red-950 font-black text-sm hover:scale-[103%] transition-transform">
           JOUW VIDEO
-        </button>
+        </button> */}
         {/* <Link to='/Login' className={`${isScrolled ? 'text-red-700' : 'text-white'} 
         sm:text-sm text-xs font-bold hover:scale-105 transition-transform bg-gray-50 bg-opacity-20 hover:bg-gray-50 hover:bg-opacity-35 py-2 px-6 rounded`} 
         onClick={handleMenuClick}>
