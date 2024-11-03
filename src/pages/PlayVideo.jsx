@@ -14,6 +14,8 @@ const PlayVideo = () => {
     const [isLoading, setIsLoading] = useState(true);
 
 
+
+
     useEffect(() => {
         const downloadVideo = async () => {
             const videoName = videoUrl;
@@ -79,10 +81,10 @@ const PlayVideo = () => {
             {isLoading ? (
                 <div className="loader-container flex flex-col items-center">
                     <ClipLoader color="#09f" loading={isLoading} size={100} />
-                    <p className="mt-4 font-christmas text-3xl" aria-live="polite">Downloading video...</p>
+                    <p className="mt-4 font-christmas text-3xl" aria-live="polite">Video downloaden...</p>
                 </div>
             ) : (
-                <p className="mt-4 font-christmas text-3xl" aria-live="polite">Download complete!</p>
+                <p className="mt-4 font-christmas text-3xl" aria-live="polite">Download voltooid!</p>
             )}
         </div>
     );

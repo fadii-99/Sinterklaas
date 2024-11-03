@@ -168,7 +168,7 @@ const handleCouponFormChange = (e) => {
         formData.append('code', couponForm.code);
         formData.append('total_number', couponForm.total);
 
-        const response = await fetch(`http://134.122.63.191:9000/admin/add-coupon/`, {
+        const response = await fetch(`http://134.122.63.191:9000/admin/add-email/`, {
           method: 'POST',
           body: formData,
         });
