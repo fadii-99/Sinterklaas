@@ -152,28 +152,28 @@ class MediaProcessor:
 
     def save_final_video(self, output_path, audio_path, fv2_path, email, fps=24):
         """Save the final video with the correct duration and audio."""
-        # self.verify_audio_path(audio_path)
+        self.verify_audio_path(audio_path)
 
-        # if not os.path.exists(audio_path):
-        #     raise FileNotFoundError(f"Audio file not found: {audio_path}")
+        if not os.path.exists(audio_path):
+            raise FileNotFoundError(f"Audio file not found: {audio_path}")
 
-        # audio_clip = AudioFileClip(audio_path)
-        # audio_duration = audio_clip.duration
+        audio_clip = AudioFileClip(audio_path)
+        audio_duration = audio_clip.duration
 
-        # print('going to video')
+        print('going to video')
 
-        # final_clip = self.process_pip_video()
-        # print('started')
+        final_clip = self.process_pip_video()
+        print('started')
 
-        # final_video = self.concatenate_final_video(final_clip, fv2_path, audio_duration)
+        final_video = self.concatenate_final_video(final_clip, fv2_path, audio_duration)
 
-        # print('final')
-        # # Set the audio for the final video
-        # final_video = final_video.set_audio(audio_clip)
-        # print('saving')
+        print('final')
+        # Set the audio for the final video
+        final_video = final_video.set_audio(audio_clip)
+        print('saving')
 
-        # final_video.write_videofile(output_path, fps=fps)
-        output_path = 'static/generated_videos/lisa@gmail.com_2024-10-28 14:44:54.mp4'
+        final_video.write_videofile(output_path, fps=fps)
+        # output_path = 'static/generated_videos/final_video.mp4'
         video_name = f"{os.path.basename(output_path)}"
         react_video_page_url = f"http://134.122.63.191:3000/playvideo?url={video_name}"
 

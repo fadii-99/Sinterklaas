@@ -19,6 +19,7 @@ from email.mime.base import MIMEBase
 from email import encoders
 from celery_app import process_pending_videos
 from fastapi.responses import StreamingResponse
+from utils import send_email
 # from utils import payments
 load_dotenv()
 
@@ -227,17 +228,22 @@ def load_pending_video():
         send_date = pending_video['send_date']
         current_time = datetime.now()
 
+        print('send_date = ',send_date)
+        print('current_time = ',current_time)
+
         # Define the time range for the send hour slot
         start_of_hour = send_date.replace(minute=0, second=0, microsecond=0)
         end_of_hour = start_of_hour + timedelta(hours=1)
 
+        print('start_of_hour = ',start_of_hour)
+        print('end_of_hour = ',end_of_hour)
         # Check if the current time falls within the send hour slot
         if start_of_hour <= current_time < end_of_hour:
             print(f"Processing video: {pending_video['final_video_path']}")
 
             # Fetch receiver's contact details
             purchase_query = """
-                SELECT receiver_phone, receiver_email  
+                SELECT receiver_phone, receiver_email, user_email  
                 FROM video_purchases 
                 WHERE id = %s;
             """
@@ -260,9 +266,43 @@ def load_pending_video():
                 # Send video via email to multiple recipients
                 email_sent = False
                 for email in email_addresses:
-                    if send_on_email(email.strip(), pending_video['final_video_path']):
-                        email_sent = True
-                        print(f"Video ID {pending_video['id']} sent via email to {email.strip()}.")
+                    video_name = f"{os.path.basename(pending_video['final_video_path'])}"
+                    react_video_page_url = f"http://134.122.63.191:3000/playvideo?url={video_name}"
+
+                    subject = "Uw Definitieve Video"
+                    subject1 = "Bevestiging: Uw Video Is Verzonden"
+                    body = f"""
+                    <html>
+                    <head></head>
+                    <body>
+                        <p>Beste gebruiker,</p>
+                        <p>Uw definitieve video is nu beschikbaar. Klik op de onderstaande link om de video te bekijken.</p>
+                        <p>
+                            <a href="{react_video_page_url}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px;">
+                                Bekijk de video
+                            </a>
+                        </p>
+                        <p>Met vriendelijke groet,<br>Het Video Team</p>
+                    </body>
+                    </html>
+                    """
+                    body1 = f"""
+                    <html>
+                    <head></head>
+                    <body>
+                        <p>Beste {purchase['user_email']},</p>
+                        <p>Wij zijn verheugd u te informeren dat uw video met de titel "<strong>Greet Video</strong>" succesvol is verzonden naar de beoogde ontvanger(s).</p>
+                        <p>Als u verdere vragen heeft, kunt u altijd contact met ons opnemen.</p>
+                        <p>Met vriendelijke groet,<br>Het Video Team</p>
+                    </body>
+                    </html>
+                    """
+
+                    send_email(email, subject, body)
+                    send_email(purchase['user_email'], subject1, body1)
+                    # if send_on_email(email.strip(), pending_video['final_video_path']):
+                    email_sent = True
+                    #     print(f"Video ID {pending_video['id']} sent via email to {email.strip()}.")
 
                 # Mark the video as sent if email was successfully delivered to any recipient
                 if email_sent:
@@ -305,10 +345,10 @@ def mark_as_sent(cursor, connection, video_id):
 
 # def dummy():
     # process_pending_videos.delay()
-scheduler.add_job(load_pending_video, 'interval', seconds=180)
+scheduler.add_job(load_pending_video, 'interval', seconds=3600)
 # scheduler.add_job(dummy, 'interval', seconds=10)
 
-# scheduler.start()
+scheduler.start()
 
 # def shutdown_event():
 #     """Shutdown the scheduler when the app stops."""
