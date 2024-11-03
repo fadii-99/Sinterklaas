@@ -313,3 +313,26 @@ async def delete_coupon(id: int = Form(...), db=Depends(get_db)):
     finally:
         cursor.close()
 
+
+
+@router.post("/admin/add-email/")
+async def store_email(email: str = Form(...), db=Depends(get_db)):
+    cursor = db.cursor(dictionary=True)
+    try:
+        # Insert the email into the newsletter table
+        cursor.execute("INSERT INTO newsletter (email) VALUES (%s)", (email,))
+        db.commit()
+        return JSONResponse(status_code=200, content={"message": "Email added successfully to newsletter."})
+    except Exception as e:
+        print(f"Error storing email: {e}")
+        db.rollback()  # Rollback the transaction if any error occurs
+        raise HTTPException(status_code=500, detail="An error occurred while adding the email.")
+    finally:
+        cursor.close()
+
+
+
+
+
+
+

@@ -152,38 +152,50 @@ class MediaProcessor:
 
     def save_final_video(self, output_path, audio_path, fv2_path, email, fps=24):
         """Save the final video with the correct duration and audio."""
-        self.verify_audio_path(audio_path)
+        # self.verify_audio_path(audio_path)
 
-        if not os.path.exists(audio_path):
-            raise FileNotFoundError(f"Audio file not found: {audio_path}")
+        # if not os.path.exists(audio_path):
+        #     raise FileNotFoundError(f"Audio file not found: {audio_path}")
 
-        audio_clip = AudioFileClip(audio_path)
-        audio_duration = audio_clip.duration
+        # audio_clip = AudioFileClip(audio_path)
+        # audio_duration = audio_clip.duration
 
-        print('going to video')
+        # print('going to video')
 
-        final_clip = self.process_pip_video()
-        print('started')
+        # final_clip = self.process_pip_video()
+        # print('started')
 
-        final_video = self.concatenate_final_video(final_clip, fv2_path, audio_duration)
+        # final_video = self.concatenate_final_video(final_clip, fv2_path, audio_duration)
 
-        print('final')
-        # Set the audio for the final video
-        final_video = final_video.set_audio(audio_clip)
-        print('saving')
+        # print('final')
+        # # Set the audio for the final video
+        # final_video = final_video.set_audio(audio_clip)
+        # print('saving')
 
-        final_video.write_videofile(output_path, fps=fps)
-        # output_path = 'static/generated_videos/fawdmuhammad14@gmail.com_2024-11-03_09:03:12.mp4'
-        # video_url = f"http://134.122.63.191:9000/videos/{os.path.basename(output_path)}"  # URL where the video is hosted
-        # encoded_video_url = urllib.parse.quote(video_url)  # Encode the URL
+        # final_video.write_videofile(output_path, fps=fps)
+        output_path = 'static/generated_videos/lisa@gmail.com_2024-10-28 14:44:54.mp4'
+        video_name = f"{os.path.basename(output_path)}"
+        react_video_page_url = f"http://134.122.63.191:3000/playvideo?url={video_name}"
 
-        # Assuming you're sending an email next
-        # react_video_page_url = f"http://134.122.63.191:3000/play-video?url={encoded_video_url}"
         subject = "Uw Definitieve Video"
-        # body = f"Bijgevoegd vindt u de video. \n\n<a href='{react_video_page_url}'>Bekijk de video</a>"
-        body = f"Bijgevoegd vindt u de video."
-        send_email_with_video(email, subject, body, output_path)
-        # send_email(email, subject, body)
+        body = f"""
+        <html>
+        <head></head>
+        <body>
+            <p>Beste gebruiker,</p>
+            <p>Uw definitieve video is nu beschikbaar. Klik op de onderstaande link om de video te bekijken.</p>
+            <p>
+                <a href="{react_video_page_url}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 5px;">
+                    Bekijk de video
+                </a>
+            </p>
+            <p>Met vriendelijke groet,<br>Het Video Team</p>
+        </body>
+        </html>
+        """
+
+        send_email(email, subject, body)
+        # body = f"Bijgevoegd vindt u de video."
 
 
     def compress_video(self, video_path):

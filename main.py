@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException,File, Form
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from cachetools import LRUCache
 from routers import early_access, purchases, welcome_messages, payments, admin
@@ -17,6 +18,7 @@ from celery_app import process_pending_videos
 from email.mime.base import MIMEBase
 from email import encoders
 from celery_app import process_pending_videos
+from fastapi.responses import StreamingResponse
 # from utils import payments
 load_dotenv()
 
@@ -30,7 +32,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/videos", StaticFiles(directory="static/generated_videos"), name="video")
 
 # Include routers
 app.include_router(early_access.router)
@@ -38,6 +39,29 @@ app.include_router(payments.router)
 app.include_router(purchases.router)
 app.include_router(welcome_messages.router)
 app.include_router(admin.router)
+
+
+VIDEO_DIRECTORY = "static/generated_videos"
+
+@app.post("/play-video/")
+async def get_video(video_name: str = Form(...)):
+    video_path = os.path.join(VIDEO_DIRECTORY, video_name)
+    print(video_name)
+    print(video_path)
+
+    if not os.path.exists(video_path):
+        raise HTTPException(status_code=404, detail="Video not found")
+
+    # Open the file in binary read mode
+    def iterfile():
+        with open(video_path, mode="rb") as file:
+            yield from file  # Stream file data in binary
+
+    return StreamingResponse(iterfile(), media_type="application/octet-stream", headers={"Content-Disposition": f"attachment; filename={video_name}"})
+
+
+
+
 
 ACCESS_TOKEN = "EAALyPvU2Hp4BO7CilpmeLHCVBUSbMKAAzCpkKh4kM8R5GkHFLDJR7E2r8dZCn9PSwW5B8iRfESEh0jNqtvFreZBI8d2WYTTfaNEsD8gSR8wbZBWIZCrEbesnVZAu1j6i6iHhbk0CWbaFx2kVt122tlWvJtFfeZB7lDR7GCNJMMqosP2ZBXIWt0uMKKuZBEHrzgbhu8QW0S6M6RxJW0rnx3XZAWeb4OEgZD"
 WHATSAPP_API_URL = "https://graph.facebook.com/v20.0/431326530069965"
