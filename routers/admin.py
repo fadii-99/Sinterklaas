@@ -1,15 +1,26 @@
 from fastapi import FastAPI, Depends, HTTPException, APIRouter, Form
+from fastapi.responses import JSONResponse
+import os
 from schemas import EarlyAccessSchema  
 from database import get_db
 from utils import send_email
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+import smtplib
+from email.mime.application import MIMEApplication
 import jwt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+from email import encoders
+from decimal import Decimal
 
 router = APIRouter()
+SECRET_KEY = "secrete-of-sinterklaas"
+
 
 
 def generate_jwt_token(user):
-    expiration_time = datetime.utcnow() + timedelta(hours=10)
+    expiration_time = datetime.now(timezone.utc) + timedelta(hours=10)
 
     payload = {
         'user_id': user.id,
@@ -30,6 +41,8 @@ def decode_jwt_token(token):
         raise HTTPException(status_code=401, detail="Token has expired")
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")
+
+
 
 
 
@@ -61,29 +74,26 @@ async def create_or_update_admin(db=Depends(get_db)):
             )
             db.commit()
             return JSONResponse(status_code=201, content={"message": "User created successfully."})
-    except IntegrityError as e:
-        db.rollback()  
-        raise HTTPException(status_code=400, detail="Username or email already exists.")
     except Exception as e:
-        print(f"Error creating or updating user: {e}")
         db.rollback()
-        raise HTTPException(status_code=500, detail="An error occurred while creating or updating the user.")
+        raise HTTPException(status_code=400, detail="Username or email already exists.")
     finally:
         cursor.close()
 
 
 
-@router.post("/admin/login")
+@router.post("/admin/login/")
 async def login(email: str = Form(...), password: str = Form(...), db=Depends(get_db)):
     cursor = db.cursor()
     try:
-        cursor.execute("SELECT * FROM users WHERE email = %s AND password = %s", (email,))
-        user = cursor.fetchone()
-        if not user:
-             return JSONResponse(scontent={"error": 'Invalid Credentials'},status_code=400)
+        # cursor.execute("SELECT * FROM users WHERE email = %s AND password = %s", (email,))
+        # user = cursor.fetchone()
+        # if not user:
+        #      return JSONResponse(scontent={"error": 'Invalid Credentials'},status_code=400)
 
-        if password == user['password']:
-            access_token = generate_jwt_token(user)
+        if password == 'admin1234' and email == 'admin':
+            # access_token = generate_jwt_token(user)
+            access_token = 'authorized'
             return JSONResponse(content={"access_token": access_token})
     
     except Exception as e:
@@ -94,18 +104,9 @@ async def login(email: str = Form(...), password: str = Form(...), db=Depends(ge
         cursor.close()
 
 
-@router.get("/admin/video-purchases/")
-async def get_video_purchases(db=Depends(get_db)):
-    cursor = db.cursor(dictionary=True)
-    try:
-        cursor.execute("SELECT * FROM video_purchases")
-        purchases = cursor.fetchall()
-        return JSONResponse(content=purchases)
-    except Exception as e:
-        print(f"Error fetching video purchases: {e}")
-        raise HTTPException(status_code=500, detail="An error occurred while fetching video purchases.")
-    finally:
-        cursor.close()
+
+
+
 
 
 @router.post("/admin/video-purchase/delete")
@@ -115,7 +116,7 @@ async def delete_video_purchase(id: int = Form(...), db=Depends(get_db)):
         cursor.execute("DELETE FROM video_purchases WHERE id = %s", (id,))
         db.commit()
 
-        return JSONResponse(status_code=204, content={"message": "Video purchase deleted successfully."})
+        return JSONResponse(status_code=200, content={"message": "Video purchase deleted successfully."})
 
     except Exception as e:
         print(f"Error deleting video purchase: {e}")
@@ -123,6 +124,8 @@ async def delete_video_purchase(id: int = Form(...), db=Depends(get_db)):
     
     finally:
         cursor.close()
+
+
 
 
 
@@ -187,17 +190,51 @@ def send_on_email(email, video):
 
 
 
+def serialize(data):
+    """Recursively convert datetime, Decimal, and other non-serializable types in a dictionary to strings or floats."""
+    if isinstance(data, dict):
+        return {key: serialize(value) for key, value in data.items()}
+    elif isinstance(data, list):
+        return [serialize(item) for item in data]
+    elif isinstance(data, datetime):
+        return data.isoformat()  # Convert datetime to ISO format
+    elif isinstance(data, Decimal):
+        return float(data)  # Convert Decimal to float
+    return data
 
-@router.get("/admin/generated-videos/")
-async def get_generated_videos(db=Depends(get_db)):
+@router.get("/admin/getdata/")
+async def getdata(db=Depends(get_db)):
     cursor = db.cursor(dictionary=True)
     try:
+        # Fetch data from each table
+        cursor.execute("SELECT * FROM video_purchases")
+        purchases = cursor.fetchall()
+
         cursor.execute("SELECT * FROM final_videos")
         finalVideos = cursor.fetchall()
-        return JSONResponse(content=finalVideos)
+
+        for video in finalVideos:
+            video['final_video_path'] = os.path.basename(video['final_video_path'])
+
+        cursor.execute("SELECT * FROM payments")
+        payments = cursor.fetchall()
+
+        cursor.execute("SELECT * FROM early_access")
+        coupons = cursor.fetchall()
+
+        # Serialize all fetched data
+        response_data = {
+            "purchases": serialize(purchases),
+            "finalVideos": serialize(finalVideos),
+            "payments": serialize(payments),
+            "coupons": serialize(coupons)
+        }
+
+        return JSONResponse(content=response_data)
+    
     except Exception as e:
-        print(f"Error fetching video purchases: {e}")
-        raise HTTPException(status_code=500, detail="An error occurred while fetching video purchases.")
+        print(f"Error fetching data: {e}")
+        raise HTTPException(status_code=500, detail="An error occurred while fetching data.")
     finally:
         cursor.close()
 
@@ -233,17 +270,13 @@ async def get_send_video(id: int = Form(...), db=Depends(get_db)):
 
 
 
-
-
-
-
-@router.post("/admin/coupons/")
+@router.post("/admin/add-coupon/")
 async def create_coupon(code: str = Form(...), total_number: int = Form(...), db=Depends(get_db)):
     cursor = db.cursor(dictionary=True)
     try:
         cursor.execute("INSERT INTO early_access (coupon, total_number) VALUES (%s, %s)", (code, total_number))
         db.commit()
-        return JSONResponse(status_code=201, content={"message": "Coupon created successfully."})
+        return JSONResponse(status_code=200, content={"message": "Coupon created successfully."})
     except Exception as e:
         print(f"Error creating coupon: {e}")
         raise HTTPException(status_code=500, detail="An error occurred while creating the coupon.")
@@ -267,15 +300,16 @@ async def get_coupons(db=Depends(get_db)):
 
         
 
-@router.delete("/admin/coupons/")
-async def delete_coupon(id: int, db=Depends(get_db)):
+@router.post("/admin/del-coupon/")
+async def delete_coupon(id: int = Form(...), db=Depends(get_db)):
     cursor = db.cursor(dictionary=True)
     try:
         cursor.execute("DELETE FROM early_access WHERE id = %s", (id,))
         db.commit()
-        return JSONResponse(status_code=204, content={"message": "Coupon deleted successfully."})
+        return JSONResponse(status_code=200)  # No content
     except Exception as e:
         print(f"Error deleting coupon: {e}")
         raise HTTPException(status_code=500, detail="An error occurred while deleting the coupon.")
     finally:
         cursor.close()
+

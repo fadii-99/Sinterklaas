@@ -6,6 +6,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 # from utils import send_whatsapp_video,send_email_with_video
 from database import get_db_connection 
 import requests
+from fastapi.staticfiles import StaticFiles
 import os
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
@@ -28,6 +29,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.mount("/videos", StaticFiles(directory="static/generated_videos"), name="video")
 
 # Include routers
 app.include_router(early_access.router)

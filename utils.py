@@ -13,7 +13,7 @@ from datetime import datetime
 import numpy as np
 from moviepy.config import change_settings
 change_settings({"IMAGEMAGICK_BINARY": "/usr/bin/convert"})
-
+import urllib.parse
 
 
 class MediaProcessor:
@@ -173,17 +173,17 @@ class MediaProcessor:
         print('saving')
 
         final_video.write_videofile(output_path, fps=fps)
-        # if os.path.getsize(output_path) > 20 * 1024 * 1024:  # 20 MB in bytes
-        #     output_path = self.compress_video(output_path)
-        #     subject = "Uw Definitieve Video"
-        #     body = "Bijgevoegd vindt u de video."
-        #     send_email_with_video(email, subject, body, output_path)
+        # output_path = 'static/generated_videos/fawdmuhammad14@gmail.com_2024-11-03_09:03:12.mp4'
+        # video_url = f"http://134.122.63.191:9000/videos/{os.path.basename(output_path)}"  # URL where the video is hosted
+        # encoded_video_url = urllib.parse.quote(video_url)  # Encode the URL
 
-        print("Video is saved. Now sending email...")
-        # Send the email with the video
+        # Assuming you're sending an email next
+        # react_video_page_url = f"http://134.122.63.191:3000/play-video?url={encoded_video_url}"
         subject = "Uw Definitieve Video"
-        body = "Bijgevoegd vindt u de video."
+        # body = f"Bijgevoegd vindt u de video. \n\n<a href='{react_video_page_url}'>Bekijk de video</a>"
+        body = f"Bijgevoegd vindt u de video."
         send_email_with_video(email, subject, body, output_path)
+        # send_email(email, subject, body)
 
 
     def compress_video(self, video_path):
@@ -312,6 +312,7 @@ def generate_video(purchase_id, purchase_date, purchase_email, files, final_vide
 
     # Define the final video path
     final_video_name = f"{purchase_email}_{purchase_date}.mp4"
+    final_video_name = final_video_name.replace(" ", "_")
     final_video_path = os.path.join(final_video_dir, final_video_name)
 
     # place image sepeartely

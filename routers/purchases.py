@@ -78,7 +78,7 @@ async def purchase_video(
             school_name,
             teacher_name,
             favourite_subject, 
-            receiver_email 
+            receiver_phone 
         ))
 
         purchase_id = cursor.lastrowid
