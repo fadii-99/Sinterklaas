@@ -66,7 +66,7 @@ function Footer() {
             className="hover:text-gray-200 text-xs text-white font-light transition-transform duration-300 hover:scale-[102%]">
               Over ons
             </Link>
-            <Link to="/Affiliate" 
+            <Link to='/Program'
             className="hover:text-gray-200 text-xs text-white font-light transition-transform duration-300 hover:scale-[102%]">
               Affiliate programma
             </Link>

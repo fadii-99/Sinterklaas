@@ -18,7 +18,7 @@ const About=lazy(() => import('../pages/About.jsx'));
 const Affiliate=lazy(() => import('../pages/Affiliate.jsx'));
 const Disclaimer=lazy(() => import('../pages/Disclaimer.jsx'));
 const PlayVideo=lazy(() => import('../pages/PlayVideo.jsx'));
-
+const Program=lazy(() => import('../pages/Program.jsx'));
 
 const router = createBrowserRouter([
   {
@@ -55,7 +55,7 @@ const router = createBrowserRouter([
       }
       ,
       {
-        path: '/Affiliate', element: ( <Suspense fallback={''}> <Affiliate/> </Suspense>),
+        path: '/Program', element: ( <Suspense fallback={''}> <Program/> </Suspense>),
       }
       ,
       {

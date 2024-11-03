@@ -2,7 +2,10 @@ import HeroSection from "../components/HeroSection";
 import React, { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 
-function Affiliate() {
+
+
+
+function Program() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Function to open the modal
@@ -15,6 +18,8 @@ function Affiliate() {
     setIsModalOpen(false);
   };
 
+
+  
   return (
     <div className="flex flex-col items-center gap-20 overflow-hidden">
       <HeroSection
@@ -115,4 +120,4 @@ function Affiliate() {
   );
 }
 
-export default Affiliate;
+export default Program;
