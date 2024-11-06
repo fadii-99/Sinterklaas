@@ -1,5 +1,5 @@
 import React, { useState , useEffect } from 'react';
-import { FaTrash, FaTimes , FaEdit } from 'react-icons/fa';
+import { FaTrash, FaTimes , FaEdit , FaPaperPlane } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { FiEdit } from 'react-icons/fi';
 import EditForm from '../components/EditForm';
@@ -35,6 +35,7 @@ function Admin() {
   const [feedbackData, setFeedbackData] = useState([]);
 
 
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
 
   const [refreshData, setRefreshData] = useState(false);
@@ -123,6 +124,31 @@ useEffect(() => {
     setSelectedCouponTableRow(null);
     setSelectedNewsletterTableRow(null);
     setShowModal(true);
+  };
+
+
+
+  const handleNewsletterSendClick = async (id) => {
+    try {
+      const formData = new FormData();
+      formData.append('id', id);
+  
+      const response = await fetch('http://134.122.63.191:9000/admin/send-email/', {
+        method: 'POST',
+        body: formData,
+      });
+  
+      if (response.ok) {
+        // Show success modal for 3 seconds
+        setShowSuccessModal(true);
+        setTimeout(() => setShowSuccessModal(false), 3000);
+  
+      } else {
+        throw new Error('Failed to send data');
+      }
+    } catch (error) {
+      console.error('Error sending data:', error);
+    }
   };
 
 
@@ -582,6 +608,7 @@ const handleCouponFormChange = (e) => {
                   <th className="py-3 px-6 bg-gray-200 text-left md:text-xs text-[9px] font-semibold text-gray-600 uppercase tracking-wider">
                   Actie
                   </th>
+                 
                 </tr>
               </thead>
               <tbody>
@@ -591,11 +618,15 @@ const handleCouponFormChange = (e) => {
                             <td className="py-3 px-6 md:text-xs text-[9px] text-gray-800">{index + 1}</td>
                             <td className="py-3 px-6 md:text-xs text-[9px] text-gray-800">{item.subject}</td>
                             <td className="py-3 px-6 md:text-xs text-[9px] text-gray-800">{item.body}</td>
-                            <td className="py-3 px-6 md:text-xs text-[9px] text-gray-800">
+                            <td className="py-3 px-6 md:text-sm text-[9px] text-gray-800 flex flex-row items-center gap-2">
                             <button onClick={() => handleNewsletterDeleteClick(item.id)} className="text-red-950 hover:text-red-700">
                                 <FaTrash />
                             </button>
+                            <button onClick={() => handleNewsletterSendClick(item.id)} className="text-red-950 hover:text-red-700">
+                                <FaPaperPlane />
+                            </button>
                             </td>
+              
 
                         </tr>
                         ))
@@ -679,7 +710,17 @@ const handleCouponFormChange = (e) => {
 
 
         {/* .......................................................................................... */}
-
+        {showSuccessModal && (
+  <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+    <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative">
+      <button onClick={() => setShowSuccessModal(false)} className="absolute top-2 right-2 text-gray-600">
+        <FaTimes />
+      </button>
+      <h2 className="text-3xl font-semibold text-gray-800 mb-4 font-christmas">Verzonden</h2>
+      <p className="text-gray-600 mb-6">Verzending Succesvol</p>
+    </div>
+  </div>
+)}
 
 
 
