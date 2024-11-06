@@ -12,7 +12,7 @@ import json
 import requests
 import asyncio
 from datetime import datetime
-from utils import send_whatsapp_video
+from utils import send_whatsapp_video, send_email
 
 load_dotenv()
 
@@ -103,6 +103,7 @@ async def purchase_video(
         db.commit()
         cursor.close()
 
+
         ret = create_payment(amount, video_name, user_email,purchase_id, db)
         print(f"Payment response: {ret}")
 
@@ -113,6 +114,87 @@ async def purchase_video(
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
     
+
+
+@router.post("/send-otp/")
+async def send_otp(user_email: str = Form(...), db=Depends(get_db)):
+    cursor = db.cursor(dictionary=True)
+    try:
+        # Generate a 6-digit OTP
+        otp = str(randint(100000, 999999))
+        otp_expiry = datetime.now() + timedelta(minutes=10)  # OTP valid for 10 minutes
+
+        # Insert OTP details into otp_verify table
+        cursor.execute(
+            "INSERT INTO otp_verify (email, otp, otp_expiry) VALUES (%s, %s, %s)",
+            (email, otp, otp_expiry)
+        )
+        db.commit()
+
+        # Prepare the OTP email body
+        body = f"""
+        <html>
+        <body style="background-color: #ffffff; font-family: Arial, sans-serif; color: #333; margin: 0; padding: 20px;">
+            <div style="max-width: 600px; margin: auto; border: 1px solid #c00; border-radius: 5px; overflow: hidden;">
+                <div style="background-color: #c00; padding: 20px; color: #ffffff; text-align: center;">
+                    <h1 style="margin: 0;">Your One-Time Password (OTP)</h1>
+                </div>
+                <div style="padding: 20px;">
+                    <p style="font-size: 16px;">Hello,</p>
+                    <p style="font-size: 16px;">Use the OTP below to proceed:</p>
+                    <div style="text-align: center; margin: 20px 0;">
+                        <span style="font-size: 24px; font-weight: bold; color: #c00;">{otp}</span>
+                    </div>
+                    <p style="font-size: 14px;">This OTP is valid until: {otp_expiry.strftime('%Y-%m-%d %H:%M:%S')}</p>
+                    <hr style="border: 1px solid #c00; margin: 20px 0;">
+                    <p style="font-size: 14px;">If you did not request this OTP, please ignore this message.</p>
+                </div>
+                <div style="background-color: #f7f7f7; padding: 10px; text-align: center;">
+                    <p style="font-size: 12px; color: #888; margin: 0;">Thank you for using our service!</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+
+        # Send OTP email
+        send_email(user_email, 'Your OTP Code', body)
+
+        return JSONResponse(status_code=200, content={"message": "OTP sent successfully to your email."})
+
+    except Exception as e:
+        db.rollback()
+        print(f"Error in send_otp: {e}")
+        raise HTTPException(status_code=500, detail="An error occurred while sending the OTP.")
+    finally:
+        cursor.close()
+
+
+
+
+@router.post("/check-otp/")
+async def check_otp(email: str = Form(...), otp: str = Form(...), db=Depends(get_db)):
+    cursor = db.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT otp, otp_expiry FROM otp_verify WHERE email = %s ORDER BY created_at DESC LIMIT 1", (email,))
+        record = cursor.fetchone()
+
+        if not record:
+            raise HTTPException(status_code=404, detail="OTP not found.")
+
+        if record['otp'] != otp:
+            raise HTTPException(status_code=400, detail="Invalid OTP.")
+        if datetime.now() > record['otp_expiry']:
+            raise HTTPException(status_code=400, detail="OTP has expired.")
+
+        return JSONResponse(status_code=200, content={"message": "OTP verified successfully."})
+
+    except Exception as e:
+        print(f"Error in check_otp: {e}")
+        raise HTTPException(status_code=500, detail="An error occurred while verifying the OTP.")
+    finally:
+        cursor.close()
+
 
 
 
