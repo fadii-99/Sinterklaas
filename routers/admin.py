@@ -1,6 +1,8 @@
-from fastapi import FastAPI, Depends, HTTPException, APIRouter, Form
+from fastapi import FastAPI, Depends, HTTPException, APIRouter, Form, UploadFile, File
+from typing import List
 from fastapi.responses import JSONResponse
 import os
+import shutil
 from schemas import EarlyAccessSchema  
 from database import get_db
 from utils import send_email
@@ -190,96 +192,98 @@ def send_on_email(email, video):
 
 
 
+def save_file(user_email: str, folder_date: str, file: UploadFile, folder: str):
+    """Save a single uploaded file and return its path."""
+    user_folder = f"static/{folder}/{user_email}/{folder_date}"
+    os.makedirs(user_folder, exist_ok=True)
+
+    file_path = os.path.join(user_folder, file.filename)
+    with open(file_path, "wb") as f:
+        f.write(file.file.read())
+
+    return file_path  # Return the path of the saved file
+
+
+
 
 @router.post("/admin/video-purchase/update/")
 async def update_video_purchase(
     id: int = Form(...),
-    user_email: str = Form(None),
-    receiver_phone: str = Form(None),
-    send_date: str = Form(None),
-    video_name: str = Form(None),
-    payment_status: str = Form(None),
-    voice_path: str = Form(None),
-    name: str = Form(None),
-    age: int = Form(None),
-    hobby: str = Form(None),
-    friends_names: str = Form(None),
-    family_names: str = Form(None),
-    school_name: str = Form(None),
-    teacher_name: str = Form(None),
-    favourite_subject: str = Form(None),
-    receiver_email: str = Form(None),
+    user_email: str = Form(...),
+    receiver_phone: str = Form(...),
+    send_date: str = Form(...),
+    age: int = Form(...),
+    hobby: str = Form(...),
+    friends_names: str = Form(...),
+    family_names: str = Form(...),
+    school_name: str = Form(...),
+    teacher_name: str = Form(...),
+    favourite_subject: str = Form(...),
+    receiver_email: str = Form(...),
+    files: List[UploadFile] = File(None),  
     db=Depends(get_db)
 ):
     cursor = db.cursor(dictionary=True)
     try:
-        update_fields = []
-        values = []
+        # Update video purchase fields
+        update_query = """
+        UPDATE video_purchases
+        SET user_email = %s, receiver_phone = %s, send_date = %s, 
+            age = %s, hobby = %s, 
+            friends_names = %s, family_names = %s, school_name = %s, 
+            teacher_name = %s, favorite_subject = %s, receiver_email = %s
+        WHERE id = %s
+        """
+        values = (
+            user_email, receiver_phone, send_date,
+            age, hobby,
+            friends_names, family_names, school_name,
+            teacher_name, favourite_subject, receiver_email, id
+        )
+        cursor.execute(update_query, values)
+        db.commit()
 
-        if user_email is not None:
-            update_fields.append("user_email = %s")
-            values.append(user_email)
-        if receiver_phone is not None:
-            update_fields.append("receiver_phone = %s")
-            values.append(receiver_phone)
-        if send_date is not None:
-            update_fields.append("send_date = %s")
-            values.append(send_date)
-        if video_name is not None:
-            update_fields.append("video_name = %s")
-            values.append(video_name)
-        if payment_status is not None:
-            update_fields.append("payment_status = %s")
-            values.append(payment_status)
-        if voice_path is not None:
-            update_fields.append("voice_path = %s")
-            values.append(voice_path)
-        if name is not None:
-            update_fields.append("name = %s")
-            values.append(name)
-        if age is not None:
-            update_fields.append("age = %s")
-            values.append(age)
-        if hobby is not None:
-            update_fields.append("hobby = %s")
-            values.append(hobby)
-        if friends_names is not None:
-            update_fields.append("friends_names = %s")
-            values.append(friends_names)
-        if family_names is not None:
-            update_fields.append("family_names = %s")
-            values.append(family_names)
-        if school_name is not None:
-            update_fields.append("school_name = %s")
-            values.append(school_name)
-        if teacher_name is not None:
-            update_fields.append("teacher_name = %s")
-            values.append(teacher_name)
-        if favourite_subject is not None:
-            update_fields.append("favorite_subject = %s")
-            values.append(favourite_subject)
-        if receiver_email is not None:
-            update_fields.append("receiver_email = %s")
-            values.append(receiver_email)
+        # Handle file deletion and insertion if files are provided
+        if files:
+            # Delete existing files associated with this purchase
+            cursor.execute("SELECT file_path FROM video_files WHERE purchase_id = %s", (id,))
+            existing_files = cursor.fetchall()
+            if existing_files:
+                # Delete each existing file from the filesystem
+                for existing_file in existing_files:
+                    existing_file_path = existing_file['file_path']
+                    if os.path.exists(existing_file_path):
+                        os.remove(existing_file_path)
+                
+                # Delete records of existing files from the database
+                cursor.execute("DELETE FROM video_files WHERE purchase_id = %s", (id,))
+                db.commit()
 
-        if update_fields:
-            update_query = f"UPDATE video_purchases SET {', '.join(update_fields)} WHERE id = %s"
-            values.append(id)
+            # Folder date for new files (set based on first existing file or current date if none)
+            folder_date = existing_files[0]['file_path'].split("/")[-2] if existing_files else send_date.split("T")[0]
+            
+            # Save each new file
+            for file in files:
+                image_path = save_file(user_email, folder_date, file, "images")
 
-            cursor.execute(update_query, tuple(values))
+                # Insert the new file path into the database
+                insert_file_path_query = """
+                INSERT INTO video_files (purchase_id, file_type, file_path)
+                VALUES (%s, %s, %s)
+                """
+                cursor.execute(insert_file_path_query, (id, "image", image_path))
             db.commit()
 
-            return JSONResponse(status_code=200, content={"message": "Video purchase updated successfully."})
-        else:
-            raise HTTPException(status_code=400, detail="No fields provided for update.")
+        return JSONResponse(status_code=200, content={"message": "Video purchase updated successfully."})
 
     except Exception as e:
         db.rollback()
         print(f"Error updating video purchase: {e}")
         raise HTTPException(status_code=500, detail="An error occurred while updating the video purchase.")
-    
     finally:
         cursor.close()
+
+
 
 
 
@@ -302,9 +306,13 @@ def serialize(data):
 async def getdata(db=Depends(get_db)):
     cursor = db.cursor(dictionary=True)
     try:
-        # Fetch data from each table
         cursor.execute("SELECT * FROM video_purchases")
         purchases = cursor.fetchall()
+
+        for purchase in purchases:
+            cursor.execute("SELECT file_path FROM video_files WHERE purchase_id = %s", (purchase['id'],))
+            file_paths = cursor.fetchall()
+            purchase['file_paths'] = [os.path.basename(file['file_path']) for file in file_paths]
 
         cursor.execute("SELECT * FROM final_videos")
         finalVideos = cursor.fetchall()
@@ -468,11 +476,11 @@ async def send_newsletter(id: int = Form(...), db=Depends(get_db)):
         if not newsletter:
             raise HTTPException(status_code=404, detail="Newsletter not found")
 
-        cursor.execute("SELECT email FROM subscribers")  
+        cursor.execute("SELECT email FROM subscribe")  
         subscribers = cursor.fetchall()
 
         if not subscribers:
-            return JSONResponse(status_code=200, content={"message": "No subscribers to send email to."})
+            return JSONResponse(status_code=200, content={"message": "No subscribeers to send email to."})
 
         for subscriber in subscribers:
             email = subscriber['email']
@@ -523,6 +531,22 @@ async def add_newsletter(
         return JSONResponse(status_code=200, content={"message": "Feedback added successfully."})
     except Exception as e:
         print(f"Error adding Feedback: {e}")
+        db.rollback()  
+        raise HTTPException(status_code=500, detail="An error occurred while adding the newsletter.")
+    finally:
+        cursor.close()
+
+
+@router.post("/admin/del-feedback/")
+async def del_feedback(id: int = Form(...),db=Depends(get_db)
+):
+    cursor = db.cursor(dictionary=True)
+    try:
+        cursor.execute("DELETE FROM feedback WHERE id = %s", (id,))
+        db.commit()
+        return JSONResponse(status_code=200, content={"message": "Feedback Deleted successfully."})
+    except Exception as e:
+        print(f"Error Deleting Feedback: {e}")
         db.rollback()  
         raise HTTPException(status_code=500, detail="An error occurred while adding the newsletter.")
     finally:

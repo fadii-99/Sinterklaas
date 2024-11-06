@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, UploadFile, File, Form
 from fastapi.responses import FileResponse, JSONResponse
 from sqlalchemy.orm import Session
+from datetime import timedelta
 from database import get_db
 from typing import List
+from random import randint
 import uuid
 from schemas import VideoPurchaseSchema, promptVoice, taskStatus
 from routers.payments import create_payment
@@ -53,11 +55,22 @@ async def purchase_video(
     family_names: str = Form(...),
     school_name: str = Form(...),
     teacher_name: str = Form(...),
-    favourite_subject: str = Form(...) 
+    favourite_subject: str = Form(...),
+    otp: int = Form(...)
 ):
     try:
-
         cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT otp, otp_expiry FROM otp_verify WHERE email = %s ORDER BY created_at DESC LIMIT 1", (user_email,))
+        record = cursor.fetchone()
+        print(type(otp))
+        print(type(record['otp']))
+
+        if not record:
+            raise HTTPException(status_code=500, detail=f"OTP not found.")
+
+        if record['otp'] != str(otp):
+            raise HTTPException(status_code=400, detail="Invalid OTP.")
+
 
         insert_purchase_query = """
         INSERT INTO video_purchases (user_email, receiver_phone, send_date, video_name, payment_status, voice_path, name, age, hobby, friends_names, family_names, school_name, teacher_name, favorite_subject,receiver_email)
@@ -127,7 +140,7 @@ async def send_otp(user_email: str = Form(...), db=Depends(get_db)):
         # Insert OTP details into otp_verify table
         cursor.execute(
             "INSERT INTO otp_verify (email, otp, otp_expiry) VALUES (%s, %s, %s)",
-            (email, otp, otp_expiry)
+            (user_email, otp, otp_expiry)
         )
         db.commit()
 
