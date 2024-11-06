@@ -85,6 +85,10 @@ function Footer() {
             className="hover:text-gray-200 text-xs text-white font-light transition-transform duration-300 hover:scale-[102%]">
               Disclaimer
             </Link>
+            <Link to="/Contact"  
+            className="hover:text-gray-200 text-xs text-white font-light transition-transform duration-300 hover:scale-[102%]">
+              Contact
+            </Link>
           </div>
         </div>
 

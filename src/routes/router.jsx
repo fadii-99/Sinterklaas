@@ -15,10 +15,12 @@ const Login=lazy(() => import('../pages/Login.jsx'));
 const Admin=lazy(() => import('../pages/Admin.jsx'));
 const Discount=lazy(() => import('../pages/Discount.jsx'));
 const About=lazy(() => import('../pages/About.jsx'));
-const Affiliate=lazy(() => import('../pages/Affiliate.jsx'));
 const Disclaimer=lazy(() => import('../pages/Disclaimer.jsx'));
 const PlayVideo=lazy(() => import('../pages/PlayVideo.jsx'));
 const Program=lazy(() => import('../pages/Program.jsx'));
+const Contact=lazy(() => import('../pages/ContactForm.jsx'));
+
+
 
 const router = createBrowserRouter([
   {
@@ -72,6 +74,10 @@ const router = createBrowserRouter([
       ,
       {
         path: '/PlayVideo', element: ( <Suspense fallback={''}> <PlayVideo /> </Suspense>),
+      }
+      ,
+      {
+        path: '/Contact', element: ( <Suspense fallback={''}> <Contact /> </Suspense>),
       }
       ,
   {
