@@ -54,7 +54,7 @@ function ContactForm() {
 
       <div className="w-full md:w-[60%] flex flex-col gap-32 mx-auto pb-24 px-10">
         <div className="overflow-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 shadow-xl bg-white p-6 rounded-lg">
-          <h3 className="text-red-950 font-bold font-christmas sm:text-4xl text-2xl pb-8">Contacteer Ons</h3>
+          {/* <h3 className="text-red-950 font-bold font-christmas sm:text-4xl text-2xl pb-8">Contacteer Ons</h3> */}
           <form onSubmit={handleContactSubmit} className="flex flex-col gap-8">
             <div>
               <label className="block text-gray-800 font-semibold mb-1 text-sm">Naam</label>

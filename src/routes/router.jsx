@@ -77,7 +77,7 @@ const router = createBrowserRouter([
       }
       ,
       {
-        path: '/Contact', element: ( <Suspense fallback={''}> <Contact /> </Suspense>),
+        path: '/Feedback', element: ( <Suspense fallback={''}> <Contact /> </Suspense>),
       }
       ,
   {
