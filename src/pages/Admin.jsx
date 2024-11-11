@@ -333,6 +333,120 @@ const handleCouponFormChange = (e) => {
   };
 
 
+
+
+  // ...............................................................................................................................
+
+
+
+
+
+  const handleDownloadCSV = () => {
+    let csvContent = '';
+    let headers = [];
+    let rows = [];
+  
+    if (activeTab === "Aangekochte Video's") {
+      headers = ['Serienummer', 'Gebruikers_Email', 'Verzend_Datum', 'Bestel_Datum', 'Verstuurd_Naar', 'Videostatus'];
+      rows = purchaseData.map((item, index) => [
+        index + 1,
+        item.user_email,
+        new Date(item.send_date).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        }) +
+          ' ' +
+          new Date(item.send_date).toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+          }),
+        new Date(item.created_at).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        }) +
+          ' ' +
+          new Date(item.created_at).toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+          }),
+        // Properly format "Verstuurd Naar"
+        item.receiver_email && JSON.parse(item.receiver_email).length > 0
+          ? JSON.parse(item.receiver_email).join(', ')
+          : item.receiver_phone && JSON.parse(item.receiver_phone).length > 0
+          ? JSON.parse(item.receiver_phone).join(', ')
+          : 'No data',
+        // Properly format "Videostatus"
+        item.video_status === 'pending'
+          ? 'In afwachting'
+          : item.video_status === 'completed'
+          ? 'Voltooid'
+          : item.video_status === 'failed'
+          ? 'Mislukt'
+          : 'Onbekend',
+      ]);
+    }
+    else if (activeTab === 'Maak Coupon') {
+      headers = ['Serienummer', 'Coupon', 'Totaal_Aantal', 'Datum'];
+      rows = couponData.map((item, index) => [
+        index + 1,
+        item.coupon,
+        item.total_number || '0',
+        new Date(item.date).toLocaleString('en-US'),
+      ]);
+    } else if (activeTab === 'Gegenereerde Video\'s') {
+      headers = ['Serienummer', 'Video Pad', 'Aankoop-ID', 'Status'];
+      rows = generatedVideos.map((item, index) => [
+        index + 1,
+        item.final_video_path,
+        item.purchase_id,
+        item.send_status,
+      ]);
+    } else if (activeTab === 'Nieuwsbrief') {
+      headers = ['Serienummer', 'Subject', 'Body'];
+      rows = newsletterData.map((item, index) => [
+        index + 1,
+        item.subject,
+        item.body,
+      ]);
+    } else if (activeTab === 'Terugkoppeling') {
+      headers = ['Serienummer', 'Naam', 'Feedback', 'Datum'];
+      rows = feedbackData.map((item, index) => [
+        index + 1,
+        item.name,
+        item.feedback,
+        new Date(item.created_at).toLocaleString('en-US'),
+      ]);
+    } else {
+      alert('Geen gegevens om te downloaden.');
+      return;
+    }
+  
+    // Create CSV content
+    csvContent += headers.join(',') + '\n';
+    rows.forEach((row) => {
+      csvContent += row.join(',') + '\n';
+    });
+  
+    // Create a downloadable CSV file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${activeTab.replace(/ /g, '_')}_data.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  
+
+  
+
+
   return (
     <div className="flex flex-col md:flex-row h-screen  md:p-8 p-4 bg-gray-100">
         <div className="md:w-1/5 w-full bg-red-950 shadow-lg shadow-red-950 md:rounded-3xl rounded-xl text-white flex 
@@ -362,8 +476,9 @@ const handleCouponFormChange = (e) => {
         </div>
 
         <div className="md:w-4/5 w-full p-4 md:p-8 flex flex-col gap-8">
-            <div className='flex flex-row items-center justify-between'>
+            <div className='flex md:flex-row flex-col md:items-center items-start gap-4 justify-between'>
             <h1 className="text-3xl md:text-5xl font-semibold font-christmas text-red-950">{activeTab}</h1>
+            <div className='flex flex-row items-center gap-5'>
             {activeTab === 'Maak Coupon' && (
                 <button
                 onClick={() => setShowCreateCouponModal(true)}
@@ -383,6 +498,16 @@ const handleCouponFormChange = (e) => {
                  Nieuwsbrief Maken
                 </button>
             )}
+            {/* ..................... */}
+            <button
+             onClick={handleDownloadCSV}
+                className="py-2 px-4 bg-gray-50 border border-black flex items-center justify-center uppercase rounded-md
+                    text-red-950 font-black sm:text-md text-xs transform transition-transform duration-300 hover:scale-[103%]"
+                >
+                 Download CSV
+                </button>
+            </div>
+           
             </div>
 
 

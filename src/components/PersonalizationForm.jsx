@@ -422,7 +422,7 @@ const handleNextClick = () => {
            <div className='w-full flex flex-row items-center justify-between gap-4'>
                 <button
                 onClick={onBack}
-                className="w-full h-[2.8rem] bg-gray-50 flex items-center justify-center rounded-md
+                className="w-full h-[2.8rem] bg-gray-50 border-black flex items-center justify-center rounded-md
                       text-red-950 font-bold text-xs transform transition-transform duration-300 hover:scale-[103%]"
               >
                 Terug
