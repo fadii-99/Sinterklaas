@@ -124,7 +124,7 @@ const handleNextClick = () => {
       friendNames: formState.friendNames,
     };
     setPersonalizationFormData(formData);
-    console.log("Form Data:", formData);
+    console.log("Form Data:", formData.dateTime);
     onNext(); // Proceed to the next step
   } else {
     setValidationError(true); // Show error message

@@ -395,7 +395,11 @@ const handleCouponFormChange = (e) => {
         index + 1,
         item.coupon,
         item.total_number || '0',
-        new Date(item.date).toLocaleString('en-US'),
+        new Date(item.date).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        }), // Format to only show date
       ]);
     } else if (activeTab === 'Gegenereerde Video\'s') {
       headers = ['Serienummer', 'Video Pad', 'Aankoop-ID', 'Status'];
@@ -418,9 +422,14 @@ const handleCouponFormChange = (e) => {
         index + 1,
         item.name,
         item.feedback,
-        new Date(item.created_at).toLocaleString('en-US'),
+        new Date(item.created_at).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        }), // Format to show only the date
       ]);
-    } else {
+    }
+     else {
       alert('Geen gegevens om te downloaden.');
       return;
     }
